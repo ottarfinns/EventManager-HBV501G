@@ -1,4 +1,4 @@
-package is.hi.hbv501g.eventmanager.Entities;
+package is.hi.hbv501g.eventmanager.Persistence.Entities;
 
 import java.time.LocalDateTime;
 

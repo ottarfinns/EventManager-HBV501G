@@ -1,5 +1,6 @@
-package is.hi.hbv501g.eventmanager.Controllers;
+package is.hi.hbv501g.eventmanager.Controllers.Implementation;
 
+import is.hi.hbv501g.eventmanager.Controllers.AccountController;
 import is.hi.hbv501g.eventmanager.Services.AccountService;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RestController;

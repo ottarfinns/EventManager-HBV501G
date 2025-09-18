@@ -1,6 +1,7 @@
-package is.hi.hbv501g.eventmanager.Services;
+package is.hi.hbv501g.eventmanager.Services.Implementation;
 
-import is.hi.hbv501g.eventmanager.Repositories.AccountRepository;
+import is.hi.hbv501g.eventmanager.Persistence.Repositories.AccountRepository;
+import is.hi.hbv501g.eventmanager.Services.AccountService;
 import org.springframework.stereotype.Service;
 
 @Service

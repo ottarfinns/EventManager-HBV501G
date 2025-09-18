@@ -1,5 +1,6 @@
-package is.hi.hbv501g.eventmanager.Repositories;
+package is.hi.hbv501g.eventmanager.Persistence.Repositories.Implementation;
 
+import is.hi.hbv501g.eventmanager.Persistence.Repositories.AccountRepository;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Repository;
 
