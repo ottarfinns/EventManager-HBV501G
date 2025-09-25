@@ -3,15 +3,15 @@ package is.hi.hbv501g.eventmanager.Persistence.Entities;
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = "accounts")
-public class Account {
+@Table(name = "attendees")
+public class Attendee extends User{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
-    private String name;
-    private String email;
-    private String phoneNumber;
-    private boolean isOrganizer;
+
+    public Attendee(String username, String name, String email, String phoneNumber) {
+        super(username, name, email, phoneNumber);
+    }
 
     // getters and setters
 }
