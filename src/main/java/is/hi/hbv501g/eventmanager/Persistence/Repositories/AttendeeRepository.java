@@ -6,6 +6,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 /**
  * Interface for user account repository actions
  */
-public interface AttendeeRepository extends JpaRepository<Attendee, Long> {
-
+public interface AttendeeRepository extends JpaRepository<Attendee, Integer> {
 }

@@ -1,10 +1,22 @@
 package is.hi.hbv501g.eventmanager.Controllers;
 
+import is.hi.hbv501g.eventmanager.Services.AccountService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RestController;
+
 /**
 * Controller using Spring. Handles APIs for user accounts
  */
-public interface AccountController {
-    //define methods names, parameters and output
+@RestController
+@Controller
+public class AccountController {
+    @Autowired
+    private final AccountService service;
+
+    public AccountController(AccountService service) {
+        this.service = service;
+    }
 
     /* Create endpoint
     * Takes in a request param of type CreateUpdateUserRequest
