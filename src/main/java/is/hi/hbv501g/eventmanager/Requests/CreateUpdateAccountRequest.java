@@ -1,10 +1,10 @@
 package is.hi.hbv501g.eventmanager.Requests;
 
 public class CreateUpdateAccountRequest {
-    private Integer id;
-    private String username;
-    private String name;
-    private String email;
-    private String phoneNumber;
-    private boolean isOrganizer;
+    public Integer id;
+    public String username;
+    public String name;
+    public String email;
+    public String phoneNumber;
+    public boolean isOrganizer;
 }

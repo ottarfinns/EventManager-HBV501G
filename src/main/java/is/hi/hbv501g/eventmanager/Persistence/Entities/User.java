@@ -12,4 +12,6 @@ public abstract class User {
         this.email = email;
         this.phoneNumber = phoneNumber;
     }
+
+    public abstract Integer getId();
 }

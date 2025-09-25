@@ -3,7 +3,7 @@ package is.hi.hbv501g.eventmanager.Persistence.Entities;
 import java.time.LocalDateTime;
 
 public class Event {
-    private String id;
+    private Integer id;
     private String name;
     private String type;
     private String description;

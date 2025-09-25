@@ -14,4 +14,9 @@ public class Attendee extends User{
     }
 
     // getters and setters
+
+    @Override
+    public Integer getId() {
+        return id;
+    }
 }
