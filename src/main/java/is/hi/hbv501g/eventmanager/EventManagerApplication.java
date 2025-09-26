@@ -3,8 +3,6 @@ package is.hi.hbv501g.eventmanager;
 import is.hi.hbv501g.eventmanager.Persistence.Repositories.AttendeeRepository;
 import is.hi.hbv501g.eventmanager.Requests.CreateUpdateUserRequest;
 import is.hi.hbv501g.eventmanager.Services.AccountService;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.EntityManagerFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.CommandLineRunner;
@@ -23,7 +21,7 @@ public class EventManagerApplication {
     // ComanndLineRunner automatically runs this on start
     @Bean
     public CommandLineRunner demo(AccountService service, AttendeeRepository repo){
-        return (args -> {
+        return (_ -> {
             CreateUpdateUserRequest badRequest = new CreateUpdateUserRequest(
                     "user1","name",
                     null,null,null,

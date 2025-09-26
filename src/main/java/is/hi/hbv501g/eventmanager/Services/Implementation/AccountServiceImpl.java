@@ -61,11 +61,11 @@ public class AccountServiceImpl implements AccountService {
         } else {
             // Attendee
 
-//            if( !attendeeRepository.findByUsername(request.username).isEmpty() // check if username taken
-//                    || !attendeeRepository.findByEmail(request.email).isEmpty() // check if email taken
-//            ) {
-//                return 0;
-//            }
+            if( !attendeeRepository.findByUsername(request.username).isEmpty() // check if username taken
+                    || !attendeeRepository.findByEmail(request.email).isEmpty() // check if email taken
+            ) {
+                return 0;
+            }
 
             // Map
             Attendee a = Mapper.MapCreateAttendee(request);
