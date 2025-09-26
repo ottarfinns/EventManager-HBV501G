@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<persistence version="2.2"
+             xmlns="http://xmlns.jcp.org/xml/ns/persistence"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence
+     http://xmlns.jcp.org/xml/ns/persistence/persistence_2_2.xsd">
+
+    <persistence-unit name="EventManager">
+        <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
+        <class>is.hi.hbv501g.eventmanager.Persistence.Entities.Organizer</class>
+        <class>is.hi.hbv501g.eventmanager.Persistence.Entities.Event</class>
+        <class>is.hi.hbv501g.eventmanager.Persistence.Entities.Attendee</class>
+        <class>is.hi.hbv501g.eventmanager.Persistence.Entities.Venue</class>
+
+        <properties>
+            <!-- database connection -->
+            <property name="jakarta.persistence.jdbc.driver" value="org.sqlite.JDBC" />
+            <property name="jakarta.persistence.jdbc.url" value="jdbc:sqlite::memory:" />
+            <property name="jakarta.persistence.jdbc.user" value="testusername" />
+            <property name="jakarta.persistence.jdbc.password" value="testpassword" />
+            <property name="dialect" value="org.hibernate.dialect.SQLiteDialect" />
+        </properties>
+    </persistence-unit>
+</persistence>

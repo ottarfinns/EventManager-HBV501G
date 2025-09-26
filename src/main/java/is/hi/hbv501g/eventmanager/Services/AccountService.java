@@ -1,9 +1,9 @@
 package is.hi.hbv501g.eventmanager.Services;
 
 
-import is.hi.hbv501g.eventmanager.Requests.CreateUpdateAccountRequest;
+import is.hi.hbv501g.eventmanager.Requests.CreateUpdateUserRequest;
 
 public interface AccountService {
-    public Integer createAccount(CreateUpdateAccountRequest request);
-    public Integer updateAccount(CreateUpdateAccountRequest request);
+    public Integer createAccount(CreateUpdateUserRequest request);
+    public Integer updateAccount(CreateUpdateUserRequest request);
 }
