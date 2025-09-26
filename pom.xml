@@ -60,6 +60,14 @@
             <groupId>org.hibernate.orm</groupId>
             <artifactId>hibernate-community-dialects</artifactId>
         </dependency>
+
+        <!--Generate getters, setters, constructors-->
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>1.18.38</version> <!-- Use the latest version -->
+            <scope>provided</scope>
+        </dependency>
     </dependencies>
 
     <build>

@@ -4,17 +4,20 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity
-@Table(name = "attendees")
+@Table(name = "organizer")
 @Getter @Setter
-public class Attendee extends User{
+public class Organizer extends User{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-    //@OneToMany(mappedBy = "attendee")
-    //private List<Tickets> tickets;
+    @OneToMany(mappedBy = "organizer")
+    private List<Event> events = new ArrayList<>();
 
-    public Attendee(String username, String name, String email, String phoneNumber, String password) {
+    public Organizer(String username, String name, String email, String phoneNumber, String password) {
         super(username, name, email, phoneNumber, password); // super == User, calling User Constructor
     }
 

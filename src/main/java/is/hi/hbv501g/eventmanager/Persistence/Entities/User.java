@@ -1,17 +1,18 @@
 package is.hi.hbv501g.eventmanager.Persistence.Entities;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
+
+@Getter
+@Setter
+@AllArgsConstructor
 public abstract class User {
     private String username;
     private String name;
     private String email;
     private String phoneNumber;
-
-    public User(String username, String name, String email, String phoneNumber) {
-        this.username = username;
-        this.name = name;
-        this.email = email;
-        this.phoneNumber = phoneNumber;
-    }
+    private String password;
 
     public abstract Integer getId();
 }
