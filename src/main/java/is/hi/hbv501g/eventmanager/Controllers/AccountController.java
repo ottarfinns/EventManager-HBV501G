@@ -1,7 +1,6 @@
 package is.hi.hbv501g.eventmanager.Controllers;
 
-import is.hi.hbv501g.eventmanager.Persistence.Entities.User;
-import is.hi.hbv501g.eventmanager.Requests.CreateUpdateAccountRequest;
+import is.hi.hbv501g.eventmanager.Requests.CreateUpdateUserRequest;
 import is.hi.hbv501g.eventmanager.Services.AccountService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -27,7 +26,7 @@ public class AccountController {
     * Returns the id of the successfully created user account
     */
     @PostMapping("/accounts")
-    public Integer createAccount(@RequestBody CreateUpdateAccountRequest request) {
+    public Integer createAccount(@RequestBody CreateUpdateUserRequest request) {
         return service.createAccount(request);
     }
 
