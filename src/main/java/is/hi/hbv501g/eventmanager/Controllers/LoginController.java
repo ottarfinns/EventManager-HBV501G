@@ -17,12 +17,12 @@ public class LoginController {
 
     @GetMapping("/attendee/login")
     public Integer attendeeLogin(@RequestBody LoginRequest request) {
-        return loginService.login(request.getUsername(), request.getPassword());
+        return loginService.attendeeLogin(request.getUsername(), request.getPassword());
     }
 
     @GetMapping("/organizer/login")
     public Integer organizerLogin(@RequestBody LoginRequest request) {
-        return loginService.login(request.getUsername(), request.getPassword());
+        return loginService.attendeeLogin(request.getUsername(), request.getPassword());
     }
 
 }
