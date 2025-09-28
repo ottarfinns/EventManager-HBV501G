@@ -1,7 +1,11 @@
 package is.hi.hbv501g.eventmanager.Requests;
 
 import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
+@Data
+@NoArgsConstructor
 @AllArgsConstructor
 public class CreateUpdateUserRequest {
     public Integer id; // only for Update, ignored for Create
