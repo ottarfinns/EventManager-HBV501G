@@ -22,7 +22,7 @@ public class LoginController {
 
     @GetMapping("/organizer/login")
     public Integer organizerLogin(@RequestBody LoginRequest request) {
-        return loginService.attendeeLogin(request.getUsername(), request.getPassword());
+        return loginService.organizerLogin(request.getUsername(), request.getPassword());
     }
 
 }
