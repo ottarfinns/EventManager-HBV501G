@@ -9,7 +9,6 @@ import java.time.LocalDateTime;
 @Table(name = "events")
 @Getter @Setter
 @NoArgsConstructor
-@AllArgsConstructor
 public class Event {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -24,4 +23,26 @@ public class Event {
     private @NonNull Venue venue;
     @ManyToOne(fetch = FetchType.LAZY)
     private Organizer organizer;
+    private boolean isActive;
+
+    public Event(
+            String name,
+            String type,
+            String description,
+            LocalDateTime dateTime,
+            int maxPeople,
+            Double price,
+            Venue venue,
+            Organizer organizer,
+            boolean isActive) {
+        this.name = name;
+        this.type = type;
+        this.description = description;
+        this.dateTime = dateTime;
+        this.maxPeople = maxPeople;
+        this.price = price;
+        this.venue = venue;
+        this.organizer = organizer;
+        this.isActive = isActive;
+    }
 }

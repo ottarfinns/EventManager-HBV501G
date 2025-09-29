@@ -17,5 +17,11 @@ public class Venue {
     private Integer id;
     private String address;
     private String postCode;
-    private String undefined; // for just writing text
+    private String name; // for just writing text
+
+    public Venue(String address, String postCode, String name) {
+        this.address = address;
+        this.postCode = postCode;
+        this.name = name;
+    }
 }
