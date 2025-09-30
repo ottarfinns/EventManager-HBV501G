@@ -9,6 +9,8 @@ import is.hi.hbv501g.eventmanager.Requests.CreateUpdateUserRequest;
 import is.hi.hbv501g.eventmanager.Services.AccountService;
 import is.hi.hbv501g.eventmanager.Services.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.regex.Pattern;
@@ -21,6 +23,8 @@ public class AccountServiceImpl implements AccountService {
     private final OrganizerRepository organizerRepository;
 
     private final String emailRegex = "^(.+)@(\\S+)$";
+
+    private final PasswordEncoder encoder = new BCryptPasswordEncoder();
 
     public AccountServiceImpl(AttendeeRepository aRepo, OrganizerRepository oRepo) {
         attendeeRepository = aRepo; organizerRepository = oRepo;
@@ -55,6 +59,8 @@ public class AccountServiceImpl implements AccountService {
             }
             // Map
             Organizer o = Mapper.MapCreateOrganizer(request);
+            // Password hashing
+            o.setPassword(encoder.encode(request.password));
             // call repository.save
             s = organizerRepository.save(o);
 
@@ -69,6 +75,8 @@ public class AccountServiceImpl implements AccountService {
 
             // Map
             Attendee a = Mapper.MapCreateAttendee(request);
+            // Password hashing
+            a.setPassword(encoder.encode(request.password));
             // call repository.save
             s = attendeeRepository.save(a);
 
