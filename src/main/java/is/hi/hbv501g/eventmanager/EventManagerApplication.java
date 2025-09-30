@@ -29,7 +29,7 @@ public class EventManagerApplication {
         SpringApplication.run(EventManagerApplication.class, args);
     }
 
-    // ComanndLineRunner automatically runs this on start
+    // CommandLineRunner automatically runs this on start
     @Bean
     public CommandLineRunner demo(AccountService service, AttendeeRepository repo){
         return (_ -> {
@@ -90,7 +90,7 @@ public class EventManagerApplication {
             log.info("bad event: {} (should be null)", bad == null ? "null" : bad.getId());
             log.info("good event id: {} (should be non-null)", (good != null && good.getId() != null) ? good.getId() : "null");
 
-            // --- Clean up ---
+            //clean up
             eventRepo.deleteAll();
             organizerRepo.deleteAll();
             venueRepo.deleteAll();
