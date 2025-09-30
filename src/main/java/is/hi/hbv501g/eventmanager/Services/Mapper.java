@@ -38,7 +38,7 @@ public class Mapper {
                 request.price,
                 request.venue,
                 request.organizer,
-                request.isActive
+                true
         );
     }
 }

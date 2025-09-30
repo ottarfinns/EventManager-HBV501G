@@ -14,7 +14,7 @@ public class Event {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
     private @NonNull String name;
-    private String type;
+    private eventType type;
     private String description;
     private LocalDateTime dateTime;
     private int maxPeople;
@@ -25,9 +25,27 @@ public class Event {
     private Organizer organizer;
     private boolean isActive;
 
+    public enum eventType {
+        conference,
+        seminar,
+        workshop,
+        concert,
+        festival,
+        exhibition,
+        sports,
+        charity,
+        fundraiser,
+        competition,
+        fashion,
+        cultural,
+        party,
+        other
+    }
+
+
     public Event(
             String name,
-            String type,
+            eventType type,
             String description,
             LocalDateTime dateTime,
             int maxPeople,

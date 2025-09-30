@@ -32,7 +32,7 @@ public class EventServiceImpl implements EventService {
             return null; //Failure state
         }
         Event s;
-        Event e = Mapper.MapCreateEvent(request); //laga MapCreateEvent
+        Event e = Mapper.MapCreateEvent(request);
         // call repository.save
         s = repository.save(e);
         return s;
