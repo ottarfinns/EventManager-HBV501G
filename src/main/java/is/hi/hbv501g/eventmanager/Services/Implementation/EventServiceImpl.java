@@ -8,6 +8,8 @@ import is.hi.hbv501g.eventmanager.Services.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class EventServiceImpl implements EventService {
     @Autowired
@@ -36,5 +38,10 @@ public class EventServiceImpl implements EventService {
         // call repository.save
         s = repository.save(e);
         return s;
+    }
+
+    @Override
+    public List<Event> getEvents() {
+        return repository.findAll();
     }
 }
