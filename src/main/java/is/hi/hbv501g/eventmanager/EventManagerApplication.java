@@ -90,10 +90,18 @@ public class EventManagerApplication {
             log.info("bad event: {} (should be null)", bad == null ? "null" : bad.getId());
             log.info("good event id: {} (should be non-null)", (good != null && good.getId() != null) ? good.getId() : "null");
 
+
+            var all = service.getEvents();
+            log.info("getEvents() -> {} events", all.size());
+            all.forEach(ev -> log.info("event: id={} name='{}' type={} dateTime={}",
+                    ev.getId(), ev.getName(), ev.getType(), ev.getDateTime()));
+
+
             //clean up
             eventRepo.deleteAll();
             organizerRepo.deleteAll();
             venueRepo.deleteAll();
         });
+
     }
 }
