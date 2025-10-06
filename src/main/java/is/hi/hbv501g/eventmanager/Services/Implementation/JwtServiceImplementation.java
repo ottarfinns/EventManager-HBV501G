@@ -1,13 +1,16 @@
 package is.hi.hbv501g.eventmanager.Services.Implementation;
 
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
 import is.hi.hbv501g.eventmanager.Services.JwtService;
+import org.springframework.stereotype.Service;
 
 import javax.crypto.SecretKey;
 import java.util.Date;
 
+@Service
 public class JwtServiceImplementation implements JwtService {
     private static final String SECRET = System.getenv("JWT_SECRET");
     private static final SecretKey KEY = Keys.hmacShaKeyFor(SECRET.getBytes());
@@ -26,10 +29,23 @@ public class JwtServiceImplementation implements JwtService {
     }
 
     public Integer getUserIdFromToken(String token) {
-        return 0;
+        Claims claims = Jwts.parserBuilder()
+                .setSigningKey(KEY)
+                .build()
+                .parseClaimsJws(token)
+                .getBody();
+        return Integer.parseInt(claims.getSubject());
     }
 
     public boolean validateToken(String token) {
-        return false;
+        try {
+            Jwts.parserBuilder()
+                    .setSigningKey(KEY)
+                    .build()
+                    .parseClaimsJws(token);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
     }
 }
