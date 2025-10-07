@@ -18,7 +18,6 @@ public class CreateUpdateEventRequest {
     public Double price;
     public Venue venue;
     public Organizer organizer;
-    public boolean isActive;
 
     //Constructor for Create
     public CreateUpdateEventRequest(
