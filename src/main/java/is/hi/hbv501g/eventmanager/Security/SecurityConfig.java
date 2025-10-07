@@ -39,6 +39,8 @@ public class SecurityConfig {
                         //.requestMatchers(HttpMethod.POST, "/events/**").authenticated()
                         .requestMatchers(HttpMethod.PUT, "/events/**").authenticated()
                         .requestMatchers(HttpMethod.DELETE, "/events/**").authenticated()
+                        .requestMatchers(HttpMethod.GET, "/test-auth/**").authenticated()
+                        .requestMatchers(HttpMethod.POST, "/test-auth/**").authenticated()
 
                         // 3) Everything else
                         .anyRequest().permitAll() // or .authenticated() if you prefer default-locked
