@@ -49,7 +49,7 @@ public class Mapper {
                 request.attendeeId,
                 request.eventId,
                 request.price,
-                request.status
+                Ticket.Status.active
         );
     }
 }

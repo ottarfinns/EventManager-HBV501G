@@ -32,7 +32,7 @@ public class Ticket {
     }
 
     public enum Status {
-        confirmed,
+        active,
         cancelled,
         refunded,
         checked_in,

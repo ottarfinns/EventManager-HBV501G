@@ -13,10 +13,9 @@ public class CreateUpdateTicketRequest {
 
 
     //Constructor for Create
-    public CreateUpdateTicketRequest(Integer attendeeId, Integer eventId, Double price, Status status) {
+    public CreateUpdateTicketRequest(Integer attendeeId, Integer eventId, Double price) {
         this.attendeeId = attendeeId;
         this.eventId = eventId;
         this.price = price;
-        this.status = status;
     }
 }
