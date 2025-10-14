@@ -2,6 +2,7 @@ package is.hi.hbv501g.eventmanager.Controllers;
 
 import is.hi.hbv501g.eventmanager.Persistence.Entities.Event;
 import is.hi.hbv501g.eventmanager.Requests.CreateUpdateEventRequest;
+import is.hi.hbv501g.eventmanager.Requests.EventFilterRequest;
 import is.hi.hbv501g.eventmanager.Services.EventService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -24,9 +25,8 @@ public class EventController {
     }
 
     @GetMapping("/events")
-    @PreAuthorize("isAuthenticated()")
-    public List<Event> getEvents() {
-        return service.getEvents();
+    public List<Event> getEvents(@RequestBody(required = false) EventFilterRequest request) {
+        return service.getEvents(request, true);
     }
 
     @PostMapping("/events")

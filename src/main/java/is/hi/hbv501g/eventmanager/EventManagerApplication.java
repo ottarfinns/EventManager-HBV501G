@@ -10,6 +10,7 @@ import is.hi.hbv501g.eventmanager.Persistence.Repositories.OrganizerRepository;
 import is.hi.hbv501g.eventmanager.Persistence.Repositories.VenueRepository;
 import is.hi.hbv501g.eventmanager.Requests.CreateUpdateEventRequest;
 import is.hi.hbv501g.eventmanager.Requests.CreateUpdateUserRequest;
+import is.hi.hbv501g.eventmanager.Requests.EventFilterRequest;
 import is.hi.hbv501g.eventmanager.Services.AccountService;
 import is.hi.hbv501g.eventmanager.Services.EventService;
 import org.slf4j.Logger;
@@ -27,28 +28,6 @@ public class EventManagerApplication {
 
     public static void main(String[] args) {
         SpringApplication.run(EventManagerApplication.class, args);
-    }
-
-    // CommandLineRunner automatically runs this on start
-    @Bean
-    public CommandLineRunner demo(AccountService service, AttendeeRepository repo){
-        return (_ -> {
-            CreateUpdateUserRequest badRequest = new CreateUpdateUserRequest(
-                    "user1","name",
-                    null,null,null,
-                    false
-            );CreateUpdateUserRequest goodRequest = new CreateUpdateUserRequest(
-                    "user1","name",
-                    "hi@hi.is",null,"123456",
-                    false
-            );
-            var badUserId = service.createAccount(badRequest);
-            var goodUserId = service.createAccount(goodRequest);
-            log.info("user id generated: {} (should be 0)", badUserId.toString());
-            log.info("user id generated: {} (should be non-zero)", goodUserId.toString());
-
-            repo.deleteAll(); // clean out when done
-        });
     }
 
     @Bean
@@ -91,11 +70,16 @@ public class EventManagerApplication {
             log.info("good event id: {} (should be non-null)", (good != null && good.getId() != null) ? good.getId() : "null");
 
 
-            var all = service.getEvents();
+            var all = service.getEvents(null, true);
             log.info("getEvents() -> {} events", all.size());
             all.forEach(ev -> log.info("event: id={} name='{}' type={} dateTime={}",
                     ev.getId(), ev.getName(), ev.getType(), ev.getDateTime()));
 
+            var filter = new EventFilterRequest("HBV501G Team 18 fundur",null,null,null,null,null,null,null,null);
+            var filtered = service.getEvents(filter, true);
+            log.info("getEvents() -> {} events", filtered.size());
+            filtered.forEach(ev -> log.info("event: id={} name='{}' type={} dateTime={}",
+                    ev.getId(), ev.getName(), ev.getType(), ev.getDateTime()));
 
             //clean up
             eventRepo.deleteAll();

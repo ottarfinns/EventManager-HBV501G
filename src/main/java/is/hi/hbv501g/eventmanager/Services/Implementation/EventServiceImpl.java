@@ -3,12 +3,14 @@ package is.hi.hbv501g.eventmanager.Services.Implementation;
 import is.hi.hbv501g.eventmanager.Persistence.Entities.Event;
 import is.hi.hbv501g.eventmanager.Persistence.Repositories.EventRepository;
 import is.hi.hbv501g.eventmanager.Requests.CreateUpdateEventRequest;
+import is.hi.hbv501g.eventmanager.Requests.EventFilterRequest;
 import is.hi.hbv501g.eventmanager.Services.EventService;
 import is.hi.hbv501g.eventmanager.Services.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import java.util.List;
+
+import static is.hi.hbv501g.eventmanager.Persistence.Repositories.EventSpecs.*;
 
 @Service
 public class EventServiceImpl implements EventService {
@@ -41,7 +43,21 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
-    public List<Event> getEvents() {
-        return repository.findAll();
+    public List<Event> getEvents(EventFilterRequest request, boolean getActiveOnly) {
+        if (request == null) {
+            return repository.findAll(onlyActive(getActiveOnly));
+        } else {
+            return repository.findAll(
+                    hasName(request.getName())
+                            .and(isType(request.getType()))
+                            .and(hasVenueId(request.getVenueId()))
+                            .and(dateAfter(request.getDateFrom()))
+                            .and(dateBefore(request.getDateTo()))
+                            .and(hasMaxOccupancy(request.getMaxOccupancy()))
+                            .and(priceGreaterThan(request.getMinPrice()))
+                            .and(priceLesserThan(request.getMaxPrice()))
+                            .and(hasOrganizerId(request.getOrganizerId()))
+            );
+        }
     }
 }
