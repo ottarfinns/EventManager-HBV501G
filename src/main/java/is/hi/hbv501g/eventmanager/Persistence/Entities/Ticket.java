@@ -17,7 +17,7 @@ public class Ticket {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
     //@ManyToOne(fetch = FetchType.LAZY)
-    private Integer attendee;
+    private Integer attendeeId;
     //@ManyToOne(fetch=FetchType.LAZY)
     private Integer eventId;
     private Double price;
@@ -25,7 +25,7 @@ public class Ticket {
     private Status status;
 
     public Ticket(Integer attendeeId, Integer eventId, Double price, Status status) {
-        this.attendee = attendeeId;
+        this.attendeeId = attendeeId;
         this.eventId = eventId;
         this.price = price;
         this.status = status;
@@ -40,7 +40,7 @@ public class Ticket {
     }
 
     public Ticket(Integer attendeeId, Double price, Status status) {
-        this.attendee = attendeeId;
+        this.attendeeId = attendeeId;
         this.price = price;
         this.status = status;
     }
