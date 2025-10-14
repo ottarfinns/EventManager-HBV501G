@@ -3,7 +3,9 @@ package is.hi.hbv501g.eventmanager.Services;
 import is.hi.hbv501g.eventmanager.Persistence.Entities.Attendee;
 import is.hi.hbv501g.eventmanager.Persistence.Entities.Event;
 import is.hi.hbv501g.eventmanager.Persistence.Entities.Organizer;
+import is.hi.hbv501g.eventmanager.Persistence.Entities.Ticket;
 import is.hi.hbv501g.eventmanager.Requests.CreateUpdateEventRequest;
+import is.hi.hbv501g.eventmanager.Requests.CreateUpdateTicketRequest;
 import is.hi.hbv501g.eventmanager.Requests.CreateUpdateUserRequest;
 
 /* Provides mapping from request objects to Entity objects with static methods */
@@ -39,6 +41,15 @@ public class Mapper {
                 request.venue,
                 request.organizer,
                 true
+        );
+    }
+
+    public static Ticket MapCreateTicket(CreateUpdateTicketRequest request) {
+        return new Ticket(
+                request.attendeeId,
+                request.eventId,
+                request.price,
+                request.status
         );
     }
 }
