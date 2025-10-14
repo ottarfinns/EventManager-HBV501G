@@ -27,8 +27,8 @@ public class TicketServiceImpl implements TicketService {
     public Ticket createTicket(CreateUpdateTicketRequest request) {
         //Validate request
         if (request == null
-        || request.attendeeId == null
-        || request.eventId == null) {
+        || request.attendeeId == null || request.attendeeId == 0
+        || request.eventId == null || request.eventId == 0) {
             return null; //Failure state
         }
         Ticket s;
