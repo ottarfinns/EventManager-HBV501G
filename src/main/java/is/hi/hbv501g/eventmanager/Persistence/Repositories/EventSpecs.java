@@ -91,7 +91,7 @@ public class EventSpecs {
     public static Specification<Event> onlyActive(boolean getActiveOnly) {
         return ((root, query, criteriaBuilder) ->
                 getActiveOnly ?
-                        criteriaBuilder.equal(root.get("is_active"), true) :
+                        criteriaBuilder.equal(root.get("active"), true) :
                         criteriaBuilder.conjunction()
 
         );
