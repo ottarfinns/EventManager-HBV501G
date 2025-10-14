@@ -1,6 +1,7 @@
 package is.hi.hbv501g.eventmanager.Controllers;
 
 import is.hi.hbv501g.eventmanager.Requests.LoginRequest;
+import is.hi.hbv501g.eventmanager.Services.JwtService;
 import is.hi.hbv501g.eventmanager.Services.LoginService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -11,18 +12,28 @@ public class LoginController {
     @Autowired
     private final LoginService loginService;
 
+    @Autowired
+    private JwtService jwtService;
+
     public LoginController(LoginService loginService) {
         this.loginService = loginService;
     }
 
-    @GetMapping("/attendee/login")
-    public Integer attendeeLogin(@RequestBody LoginRequest request) {
-        return loginService.attendeeLogin(request.getUsername(), request.getPassword());
+    @PostMapping("/attendee/login")
+    public String attendeeLogin(@RequestBody LoginRequest request) {
+        Integer userId = loginService.attendeeLogin(request.getUsername(), request.getPassword());
+        if (userId > 0) {
+            return jwtService.generateToken(userId, "ATTENDEE");
+        }
+        return null;
     }
 
-    @GetMapping("/organizer/login")
-    public Integer organizerLogin(@RequestBody LoginRequest request) {
-        return loginService.organizerLogin(request.getUsername(), request.getPassword());
-    }
+    @PostMapping("/organizer/login")
+    public String organizerLogin(@RequestBody LoginRequest request) {
+        Integer userId = loginService.organizerLogin(request.getUsername(), request.getPassword());
+        if (userId > 0) {
+            return jwtService.generateToken(userId, "ORGANIZER");
+        }
+        return null;    }
 
 }
