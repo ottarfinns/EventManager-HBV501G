@@ -37,7 +37,7 @@ public class EventManagerApplication {
 
     // CommandLineRunner automatically runs this on start
     @Bean
-    public CommandLineRunner demo(AccountService accountService, AttendeeRepository attendeeRepo, EventService service, VenueRepository venueRepo, EventRepository eventRepo, OrganizerRepository organizerRepo, TicketService ticketService, TicketRepository ticketRepo) {
+    public CommandLineRunner demo(AccountService accountService, EventService service, VenueRepository venueRepo, OrganizerRepository organizerRepo, TicketService ticketService) {
         return (_ -> {
 
             CreateUpdateUserRequest badRequest = new CreateUpdateUserRequest(
