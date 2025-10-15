@@ -8,11 +8,14 @@ import is.hi.hbv501g.eventmanager.Services.Mapper;
 import is.hi.hbv501g.eventmanager.Services.TicketService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import java.util.List;
 
 @Service
 public class TicketServiceImpl implements TicketService {
+    private static final Logger log = LoggerFactory.getLogger(TicketServiceImpl.class);
+
     @Autowired
     private final TicketRepository repository;
 
@@ -25,12 +28,36 @@ public class TicketServiceImpl implements TicketService {
      * Returns the id of the successfully created ticket
      */
     public Ticket createTicket(CreateUpdateTicketRequest request) {
-        //Validate request
-        if (request == null
-        || request.attendeeId == null || request.attendeeId == 0
-        || request.eventId == null || request.eventId == 0) {
-            return null; //Failure state
+
+        if (request == null) {
+            //log.warn("createTicket: request is null");
+            return null;
         }
+
+        if (request.attendeeId == null || request.attendeeId == 0) {
+            //log.warn("createTicket: invalid attendeeId={}", request.attendeeId);
+            return null;
+        }
+
+        if (request.eventId == null || request.eventId == 0) {
+            //log.warn("createTicket: invalid eventId={}", request.eventId);
+            return null;
+        }
+
+        if (request.price == null || request.price < 0) {
+            //log.warn("createTicket: invalid price={}", request.price);
+            return null;
+        }
+
+        //tékka hvort það sé nú þegar til miði fyrir þessu eventi fyrir þennan attendee
+        List<Ticket> tickets = getTicketByUserId(request.attendeeId);
+        boolean alreadyHasTicket = tickets.stream()
+                .anyMatch(t -> t.getEventId().equals(request.eventId));
+        if (alreadyHasTicket) {
+            log.warn("Ticket with event id {} already exists for this user", request.eventId);
+            return null; //can also return the ticket that matches
+        }
+
         Ticket s;
         Ticket t = Mapper.MapCreateTicket(request);
         //call repository.save
