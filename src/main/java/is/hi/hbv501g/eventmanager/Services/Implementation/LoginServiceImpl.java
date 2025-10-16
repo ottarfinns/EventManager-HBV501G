@@ -35,7 +35,4 @@ public class LoginServiceImpl implements LoginService {
                 .map(o -> o.getId())
                 .orElse(0);
     }
-
-    // Need to add isLoggedIn attribute to users?
-
 }

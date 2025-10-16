@@ -4,6 +4,7 @@ import is.hi.hbv501g.eventmanager.Persistence.Entities.Event.eventType;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.lang.Nullable;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -15,11 +16,11 @@ import java.time.LocalDateTime;
 public class EventFilterRequest {
     private String name;
     private eventType type;
-    private long venueId;
+    private Long venueId;
     private LocalDateTime dateFrom;
     private LocalDateTime dateTo;
-    private int maxOccupancy;
-    private BigDecimal price;
-    private long organizerId;
-    private boolean isActive;
+    private Integer maxOccupancy;
+    private BigDecimal maxPrice;
+    private BigDecimal minPrice;
+    private Long organizerId;
 }

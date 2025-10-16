@@ -9,6 +9,7 @@ import is.hi.hbv501g.eventmanager.Persistence.Repositories.*;
 import is.hi.hbv501g.eventmanager.Requests.CreateUpdateEventRequest;
 import is.hi.hbv501g.eventmanager.Requests.CreateUpdateTicketRequest;
 import is.hi.hbv501g.eventmanager.Requests.CreateUpdateUserRequest;
+import is.hi.hbv501g.eventmanager.Requests.EventFilterRequest;
 import is.hi.hbv501g.eventmanager.Services.AccountService;
 import is.hi.hbv501g.eventmanager.Services.EventService;
 import is.hi.hbv501g.eventmanager.Services.TicketService;
@@ -92,7 +93,7 @@ public class EventManagerApplication {
             log.info("good event id: {} (should be non-null)", (goodEvent != null && goodEvent.getId() != null) ? goodEvent.getId() : "null");
 
 
-            var all = service.getEvents();
+            var all = service.getEvents(null, true);
             log.info("getEvents() -> {} events", all.size());
             all.forEach(ev -> log.info("event: id={} name='{}' type={} dateTime={}",
                     ev.getId(), ev.getName(), ev.getType(), ev.getDateTime()));
@@ -113,6 +114,12 @@ public class EventManagerApplication {
             log.info("bad ticket: {} (should be null)", badTicket == null ? "null" : badTicket.getId());
             log.info("good ticket: {} (should be non-null)", goodTicket == null ? "null" : goodTicket.getId());
             log.info("repeat ticket: {} (should be null)", duplicateTicket == null ? "null" : duplicateTicket.getId());
+            
+            var filter = new EventFilterRequest("HBV501G Team 18 fundur",null,null,null,null,null,null,null,null);
+            var filtered = service.getEvents(filter, true);
+            log.info("getEvents() -> {} events", filtered.size());
+            filtered.forEach(ev -> log.info("event: id={} name='{}' type={} dateTime={}",
+                    ev.getId(), ev.getName(), ev.getType(), ev.getDateTime()));
 
             log.info("cleanup: start");
             jdbc.execute("TRUNCATE TABLE attendees, events, organizer, venues, ticket RESTART IDENTITY CASCADE");
