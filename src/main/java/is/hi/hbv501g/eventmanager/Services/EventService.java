@@ -5,10 +5,12 @@ import is.hi.hbv501g.eventmanager.Requests.CreateUpdateEventRequest;
 import is.hi.hbv501g.eventmanager.Requests.EventFilterRequest;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface EventService {
      Event createEvent(CreateUpdateEventRequest request);
      List<Event> getEvents(EventFilterRequest request, boolean getActiveOnly);
+     Optional<Event> updateEvent(Integer eventId, CreateUpdateEventRequest request);
 
      Event getEventById(int id);
 }

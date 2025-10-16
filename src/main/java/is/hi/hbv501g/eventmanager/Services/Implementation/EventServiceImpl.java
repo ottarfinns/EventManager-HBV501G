@@ -9,6 +9,7 @@ import is.hi.hbv501g.eventmanager.Services.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.List;
+import java.util.Optional;
 
 import static is.hi.hbv501g.eventmanager.Persistence.Repositories.EventSpecs.*;
 
@@ -22,8 +23,7 @@ public class EventServiceImpl implements EventService {
     }
 
     /*
-     * Takes in a request param of type CreateEventUserRequest
-     * Returns the id of the successfully created event
+     * Takes in a request param of type CreateEventUserRequest, returns created User
      */
     public Event createEvent(CreateUpdateEventRequest request) {
         //Validate request
@@ -59,6 +59,26 @@ public class EventServiceImpl implements EventService {
                             .and(hasOrganizerId(request.getOrganizerId()))
             );
         }
+    }
+
+    @Override
+    public Optional<Event> updateEvent(Integer eventId, CreateUpdateEventRequest request) {
+        //Validate request
+        if (request == null || eventId == null) return null; // Bad request
+
+        Optional<Event> optionalEvent = repository.findById(eventId);
+        optionalEvent.ifPresent(e -> {
+            if (request.name != null) e.setName(request.name);
+            if (request.type != null) e.setType(request.type);
+            if (request.description != null) e.setDescription(request.description);
+            if (request.dateTime != null) e.setDateTime(request.dateTime);
+            if (request.maxPeople != null) e.setMaxPeople(request.maxPeople);
+            if (request.price != null) e.setPrice(request.price);
+            if (request.venue != null) e.setVenue(request.venue);
+            if (request.organizer != null) e.setOrganizer(request.organizer);
+            repository.save(e);
+        });
+        return optionalEvent;
     }
 
     public Event getEventById(int id) {

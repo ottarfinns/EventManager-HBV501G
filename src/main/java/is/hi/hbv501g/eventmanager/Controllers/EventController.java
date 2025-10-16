@@ -11,6 +11,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @Controller
@@ -57,4 +58,9 @@ public class EventController {
         return "Success! You are an ATTENDEE with user ID: " + userId;
     }
 
+
+    @PutMapping("/events/{eventId}")
+    public Optional<Event> updateEvents(@PathVariable Integer eventId, @RequestBody CreateUpdateEventRequest request) {
+        return service.updateEvent(eventId, request);
+    }
 }
