@@ -3,22 +3,24 @@ package is.hi.hbv501g.eventmanager;
 import is.hi.hbv501g.eventmanager.Persistence.Entities.Event;
 import is.hi.hbv501g.eventmanager.Persistence.Entities.Event.eventType;
 import is.hi.hbv501g.eventmanager.Persistence.Entities.Organizer;
+import is.hi.hbv501g.eventmanager.Persistence.Entities.Ticket;
 import is.hi.hbv501g.eventmanager.Persistence.Entities.Venue;
-import is.hi.hbv501g.eventmanager.Persistence.Repositories.AttendeeRepository;
-import is.hi.hbv501g.eventmanager.Persistence.Repositories.EventRepository;
-import is.hi.hbv501g.eventmanager.Persistence.Repositories.OrganizerRepository;
-import is.hi.hbv501g.eventmanager.Persistence.Repositories.VenueRepository;
+import is.hi.hbv501g.eventmanager.Persistence.Repositories.*;
 import is.hi.hbv501g.eventmanager.Requests.CreateUpdateEventRequest;
+import is.hi.hbv501g.eventmanager.Requests.CreateUpdateTicketRequest;
 import is.hi.hbv501g.eventmanager.Requests.CreateUpdateUserRequest;
 import is.hi.hbv501g.eventmanager.Requests.EventFilterRequest;
 import is.hi.hbv501g.eventmanager.Services.AccountService;
 import is.hi.hbv501g.eventmanager.Services.EventService;
+import is.hi.hbv501g.eventmanager.Services.TicketService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
+import org.springframework.jdbc.core.JdbcTemplate;
 
 import java.time.LocalDateTime;
 
@@ -30,9 +32,30 @@ public class EventManagerApplication {
         SpringApplication.run(EventManagerApplication.class, args);
     }
 
+    @Autowired
+    JdbcTemplate jdbc;
+
+
+    // CommandLineRunner automatically runs this on start
     @Bean
-    public CommandLineRunner demoEvent(EventService service, VenueRepository venueRepo, EventRepository eventRepo, OrganizerRepository organizerRepo) {
+    public CommandLineRunner demo(AccountService accountService, EventService service, VenueRepository venueRepo, OrganizerRepository organizerRepo, TicketService ticketService) {
         return (_ -> {
+
+            CreateUpdateUserRequest badRequest = new CreateUpdateUserRequest(
+                    "user1","name",
+                    null,null,null,
+                    false
+            );
+            CreateUpdateUserRequest goodRequest = new CreateUpdateUserRequest(
+                    "user1","name",
+                    "hi@hi.is",null,"123456",
+                    false
+            );
+            var badUserId = accountService.createAccount(badRequest);
+            var goodUserId = accountService.createAccount(goodRequest);
+            log.info("user id generated: {} (should be 0)", badUserId.toString());
+            log.info("user id generated: {} (should be non-zero)", goodUserId.toString());
+
             //create and save valid venue
             Venue venue = new Venue(null,null,"VR-II");
             venue = venueRepo.save(venue);
@@ -57,17 +80,17 @@ public class EventManagerApplication {
                     "HBV501G Team 18 fundur",
                     eventType.workshop,
                     "Working on Assignment 2: Elaboration",
-                    LocalDateTime.of(2025, 9, 30, 15, 0),
+                    LocalDateTime.now().plusDays(10),
                     4,
                     0.0,
                     venue,
                     organizer
             );
-            Event bad = service.createEvent(badEventReq);
-            Event good = service.createEvent(goodEventReq);
+            Event badEvent = service.createEvent(badEventReq);
+            Event goodEvent = service.createEvent(goodEventReq);
 
-            log.info("bad event: {} (should be null)", bad == null ? "null" : bad.getId());
-            log.info("good event id: {} (should be non-null)", (good != null && good.getId() != null) ? good.getId() : "null");
+            log.info("bad event: {} (should be null)", badEvent == null ? "null" : badEvent.getId());
+            log.info("good event id: {} (should be non-null)", (goodEvent != null && goodEvent.getId() != null) ? goodEvent.getId() : "null");
 
 
             var all = service.getEvents(null, true);
@@ -75,16 +98,32 @@ public class EventManagerApplication {
             all.forEach(ev -> log.info("event: id={} name='{}' type={} dateTime={}",
                     ev.getId(), ev.getName(), ev.getType(), ev.getDateTime()));
 
+            //test ticket creation
+            CreateUpdateTicketRequest badTicketReq = new CreateUpdateTicketRequest(
+                    goodUserId,0, goodEvent.getPrice()
+            );
+            CreateUpdateTicketRequest goodTicketReq = new CreateUpdateTicketRequest(
+                    goodUserId,
+                    goodEvent.getId(),
+                    goodEvent.getPrice()
+            );
+            Ticket badTicket = ticketService.createTicket(badTicketReq);
+            Ticket goodTicket = ticketService.createTicket(goodTicketReq);
+            Ticket duplicateTicket = ticketService.createTicket(goodTicketReq);
+
+            log.info("bad ticket: {} (should be null)", badTicket == null ? "null" : badTicket.getId());
+            log.info("good ticket: {} (should be non-null)", goodTicket == null ? "null" : goodTicket.getId());
+            log.info("repeat ticket: {} (should be null)", duplicateTicket == null ? "null" : duplicateTicket.getId());
+            
             var filter = new EventFilterRequest("HBV501G Team 18 fundur",null,null,null,null,null,null,null,null);
             var filtered = service.getEvents(filter, true);
             log.info("getEvents() -> {} events", filtered.size());
             filtered.forEach(ev -> log.info("event: id={} name='{}' type={} dateTime={}",
                     ev.getId(), ev.getName(), ev.getType(), ev.getDateTime()));
 
-            //clean up
-            eventRepo.deleteAll();
-            organizerRepo.deleteAll();
-            venueRepo.deleteAll();
+            log.info("cleanup: start");
+            jdbc.execute("TRUNCATE TABLE attendees, events, organizer, venues, ticket RESTART IDENTITY CASCADE");
+            log.info("cleanup: done");
         });
 
     }
