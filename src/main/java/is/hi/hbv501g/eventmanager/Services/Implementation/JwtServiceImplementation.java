@@ -63,6 +63,15 @@ public class JwtServiceImplementation implements JwtService {
         return Integer.parseInt(claims.getSubject());
     }
 
+    public String getUserTypeFromToken(String token) {
+        Claims claims = Jwts.parserBuilder()
+                .setSigningKey(key)
+                .build()
+                .parseClaimsJws(token)
+                .getBody();
+        return claims.get("userType").toString();
+    }
+
     @Override
     public boolean validateToken(String token) {
         try {
