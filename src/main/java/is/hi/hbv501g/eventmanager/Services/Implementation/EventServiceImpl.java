@@ -60,4 +60,8 @@ public class EventServiceImpl implements EventService {
             );
         }
     }
+
+    public Event getEventById(int id) {
+        return repository.findById(id).orElse(null);
+    }
 }

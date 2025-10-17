@@ -13,4 +13,5 @@ import java.util.List;
 public interface TicketRepository extends JpaRepository<Ticket, Integer> {
     List<Ticket> findByAttendeeId(Integer attendeeId);
     List<Ticket> findByEventId(Integer eventId);
+    Integer countByEventId(Integer eventId);
 }

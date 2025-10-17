@@ -51,10 +51,20 @@ public class EventManagerApplication {
                     "hi@hi.is",null,"123456",
                     false
             );
+
+            //second user (to test full event)
+            CreateUpdateUserRequest user2Req = new CreateUpdateUserRequest(
+                    "user2","name2",
+                    "user2@hi.is",null,"123456",
+                    false
+            );
+
             var badUserId = accountService.createAccount(badRequest);
             var goodUserId = accountService.createAccount(goodRequest);
+            var user2Id = accountService.createAccount(user2Req);
             log.info("user id generated: {} (should be 0)", badUserId.toString());
             log.info("user id generated: {} (should be non-zero)", goodUserId.toString());
+            log.info("user 2 id generated: {} (should be non-zero)", user2Id.toString());
 
             //create and save valid venue
             Venue venue = new Venue(null,null,"VR-II");
@@ -81,7 +91,7 @@ public class EventManagerApplication {
                     eventType.workshop,
                     "Working on Assignment 2: Elaboration",
                     LocalDateTime.now().plusDays(10),
-                    4,
+                    1,
                     0.0,
                     venue,
                     organizer
@@ -107,14 +117,24 @@ public class EventManagerApplication {
                     goodEvent.getId(),
                     goodEvent.getPrice()
             );
+
+            CreateUpdateTicketRequest user2TicketReq = new CreateUpdateTicketRequest(
+                    user2Id,
+                    goodEvent.getId(),
+                    goodEvent.getPrice()
+            );
+
+
             Ticket badTicket = ticketService.createTicket(badTicketReq);
             Ticket goodTicket = ticketService.createTicket(goodTicketReq);
             Ticket duplicateTicket = ticketService.createTicket(goodTicketReq);
+            Ticket fullTicket = ticketService.createTicket(user2TicketReq);
 
             log.info("bad ticket: {} (should be null)", badTicket == null ? "null" : badTicket.getId());
             log.info("good ticket: {} (should be non-null)", goodTicket == null ? "null" : goodTicket.getId());
             log.info("repeat ticket: {} (should be null)", duplicateTicket == null ? "null" : duplicateTicket.getId());
-            
+            log.info("ticket for full event: {} (should be null)", fullTicket == null ? "null" : fullTicket.getId());
+
             var filter = new EventFilterRequest("HBV501G Team 18 fundur",null,null,null,null,null,null,null,null);
             var filtered = service.getEvents(filter, true);
             log.info("getEvents() -> {} events", filtered.size());

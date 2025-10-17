@@ -1,15 +1,20 @@
 package is.hi.hbv501g.eventmanager.Services.Implementation;
 
+import is.hi.hbv501g.eventmanager.Persistence.Entities.Event;
 import is.hi.hbv501g.eventmanager.Persistence.Entities.Ticket;
 import is.hi.hbv501g.eventmanager.Persistence.Entities.Ticket.Status;
+import is.hi.hbv501g.eventmanager.Persistence.Repositories.EventRepository;
 import is.hi.hbv501g.eventmanager.Persistence.Repositories.TicketRepository;
 import is.hi.hbv501g.eventmanager.Requests.CreateUpdateTicketRequest;
 import is.hi.hbv501g.eventmanager.Services.Mapper;
 import is.hi.hbv501g.eventmanager.Services.TicketService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
+
 import java.util.List;
 
 @Service
@@ -18,9 +23,11 @@ public class TicketServiceImpl implements TicketService {
 
     @Autowired
     private final TicketRepository repository;
+    private final EventRepository eventRepository;
 
-    public TicketServiceImpl(TicketRepository repo) {
+    public TicketServiceImpl(TicketRepository repo, EventRepository eventRepo) {
         repository = repo;
+        eventRepository = eventRepo;
     }
 
     /*
@@ -39,17 +46,29 @@ public class TicketServiceImpl implements TicketService {
             return null;
         }
 
-        if (request.eventId == null || request.eventId == 0) {
-            //log.warn("createTicket: invalid eventId={}", request.eventId);
-            return null;
-        }
-
         if (request.price == null || request.price < 0) {
             //log.warn("createTicket: invalid price={}", request.price);
             return null;
         }
 
-        //tékka hvort það sé nú þegar til miði fyrir þessu eventi fyrir þennan attendee
+        if (request.eventId == null || request.eventId == 0) {
+            //log.warn("createTicket: invalid eventId={}", request.eventId);
+            return null;
+        }
+
+
+        //ensure event has space
+        Event event = eventRepository.findById(request.eventId).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Event not found"));
+        int ticketCount = repository.countByEventId(request.eventId);
+        int maxOccupancy = event.getMaxPeople();
+        if (ticketCount >= maxOccupancy) {
+            //throw new IllegalStateException("Event is full!");
+            log.warn("Ticket count exceeds max occupancy limit, ticket not created");
+            return null;
+        }
+
+
+        //return null if user already has a ticket for this event
         List<Ticket> tickets = getTicketByUserId(request.attendeeId);
         boolean alreadyHasTicket = tickets.stream()
                 .anyMatch(t -> t.getEventId().equals(request.eventId));
