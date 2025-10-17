@@ -6,4 +6,6 @@ public interface JwtService {
     public Integer getUserIdFromToken(String token);
 
     public boolean validateToken(String token);
+
+    public String getUserTypeFromToken(String token);
 }
