@@ -4,10 +4,11 @@ import is.hi.hbv501g.eventmanager.Persistence.Entities.Ticket;
 import is.hi.hbv501g.eventmanager.Requests.CreateUpdateTicketRequest;
 import is.hi.hbv501g.eventmanager.Services.TicketService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @Controller
 @RestController
@@ -28,4 +29,12 @@ public class TicketController {
         return service.createTicket(request);
     }
 
+
+    @GetMapping("/attendee/{id}/tickets")
+    public List<Ticket> getTicketByUserId(@PathVariable int pathId, @AuthenticationPrincipal int userId){
+        if(pathId != userId){
+            return null;
+        }
+        return service.getTicketByUserId(userId);
+    }
 }
