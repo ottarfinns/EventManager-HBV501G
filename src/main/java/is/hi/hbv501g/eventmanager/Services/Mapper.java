@@ -29,7 +29,7 @@ public class Mapper {
         );
     }
 
-    public static Event MapCreateEvent(CreateUpdateEventRequest request, Optional<Venue> optionalVenue, Optional<Organizer> optionalOrganizer) {
+    public static Event MapCreateEvent(CreateUpdateEventRequest request, Optional<Venue> optionalVenue, Organizer organizer) {
         return new Event(
                 request.name,
                 request.type,
@@ -38,7 +38,7 @@ public class Mapper {
                 request.maxPeople,
                 request.price,
                 optionalVenue.orElse(null),
-                optionalOrganizer.orElse(null),
+                organizer,
                 true
         );
     }

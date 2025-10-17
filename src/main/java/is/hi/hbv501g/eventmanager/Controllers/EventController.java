@@ -4,6 +4,7 @@ import is.hi.hbv501g.eventmanager.Persistence.Entities.Event;
 import is.hi.hbv501g.eventmanager.Requests.CreateUpdateEventRequest;
 import is.hi.hbv501g.eventmanager.Requests.EventFilterRequest;
 import is.hi.hbv501g.eventmanager.Services.EventService;
+import is.hi.hbv501g.eventmanager.Services.JwtService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -11,7 +12,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 @RestController
@@ -20,8 +20,12 @@ public class EventController {
     @Autowired
     private final EventService service;
 
-    public EventController(EventService service) {
+    @Autowired
+    private final JwtService jwtService;
+
+    public EventController(EventService service, JwtService jwtService) {
         this.service = service;
+        this.jwtService = jwtService;
     }
 
     @GetMapping("/events")
@@ -36,8 +40,9 @@ public class EventController {
 
 
     @PostMapping("/events")
-    public Event createEvent(@RequestBody CreateUpdateEventRequest request) {
-        return service.createEvent(request);
+    @PreAuthorize("hasRole('ORGANIZER')")
+    public Event createEvent(@RequestBody CreateUpdateEventRequest request, @AuthenticationPrincipal Integer userId) {
+        return service.createEvent(userId, request);
     }
 
     @GetMapping("/test-auth")
@@ -59,7 +64,8 @@ public class EventController {
     }
 
     @PutMapping("/events/{eventId}")
-    public Optional<Event> updateEvents(@PathVariable Integer eventId, @RequestBody CreateUpdateEventRequest request) {
-        return service.updateEvent(eventId, request);
+    @PreAuthorize("hasRole('ORGANIZER')")
+    public Optional<Event> updateEvents(@PathVariable Integer eventId, @RequestBody CreateUpdateEventRequest request, @AuthenticationPrincipal Integer userId) {
+        return service.updateEvent(eventId, userId, request);
     }
 }

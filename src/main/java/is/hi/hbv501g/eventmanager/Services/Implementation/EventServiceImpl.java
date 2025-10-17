@@ -7,6 +7,7 @@ import is.hi.hbv501g.eventmanager.Persistence.Repositories.EventRepository;
 import is.hi.hbv501g.eventmanager.Persistence.Repositories.VenueRepository;
 import is.hi.hbv501g.eventmanager.Requests.CreateUpdateEventRequest;
 import is.hi.hbv501g.eventmanager.Requests.EventFilterRequest;
+import is.hi.hbv501g.eventmanager.Services.AccountService;
 import is.hi.hbv501g.eventmanager.Services.EventService;
 import is.hi.hbv501g.eventmanager.Services.JwtService;
 import is.hi.hbv501g.eventmanager.Services.Mapper;
@@ -25,18 +26,21 @@ public class EventServiceImpl implements EventService {
     private final VenueRepository venueRepository;
     @Autowired
     private final JwtService jwtService;
+    @Autowired
+    private final AccountService accountService;
 
-    public EventServiceImpl(EventRepository repo, VenueRepository venueRepo, JwtService jwtServ)
+    public EventServiceImpl(EventRepository repo, VenueRepository venueRepo, JwtService jwtServ, AccountService accountService)
     {
         eventRepository = repo;
         this.venueRepository = venueRepo;
         this.jwtService = jwtServ;
+        this.accountService = accountService;
     }
 
     /*
      * Takes in a request param of type CreateEventUserRequest, returns created User
      */
-    public Event createEvent(CreateUpdateEventRequest request) {
+    public Event createEvent(Integer organizerId, CreateUpdateEventRequest request) {
         //Validate request
         if (request == null
                 || request.name == null
@@ -54,9 +58,7 @@ public class EventServiceImpl implements EventService {
         }
 
         // find organizer
-        // TODO when auth can read token & userid
-        Optional<Organizer> o = Optional.empty();
-
+        var o = (Organizer) accountService.getAccountById(organizerId);
 
         Event s;
         Event e = Mapper.MapCreateEvent(request, v, o);
@@ -85,7 +87,7 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
-    public Optional<Event> updateEvent(Integer eventId, CreateUpdateEventRequest request) {
+    public Optional<Event> updateEvent(Integer eventId, Integer organizerId, CreateUpdateEventRequest request) {
         //Validate request
         if (request == null || eventId == null) return null; // Bad request
 
@@ -111,6 +113,6 @@ public class EventServiceImpl implements EventService {
     }
 
     public Event getEventById(int id) {
-        return repository.findById(id).orElse(null);
+        return eventRepository.findById(id).orElse(null);
     }
 }

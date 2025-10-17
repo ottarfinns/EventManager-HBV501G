@@ -94,8 +94,8 @@ public class EventManagerApplication {
                     0.0,
                     venue.getId()
             );
-            Event badEvent = service.createEvent(badEventReq);
-            Event goodEvent = service.createEvent(goodEventReq);
+            Event badEvent = service.createEvent(1, badEventReq);
+            Event goodEvent = service.createEvent(1,goodEventReq);
 
             log.info("bad event: {} (should be null)", badEvent == null ? "null" : badEvent.getId());
             log.info("good event id: {} (should be non-null)", (goodEvent != null && goodEvent.getId() != null) ? goodEvent.getId() : "null");
