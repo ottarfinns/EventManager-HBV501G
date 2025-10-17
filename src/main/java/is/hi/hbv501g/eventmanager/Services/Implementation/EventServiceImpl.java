@@ -44,6 +44,7 @@ public class EventServiceImpl implements EventService {
                 || request.name.isEmpty()
                 || request.price == null
                 || request.dateTime == null
+                || request.maxPeople == null
         ) {
             return null; //Failure state
         }
