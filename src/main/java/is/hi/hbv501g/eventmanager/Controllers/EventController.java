@@ -11,6 +11,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @RestController
@@ -35,7 +36,6 @@ public class EventController {
 
 
     @PostMapping("/events")
-    //@PreAuthorize("isAuthenticated()")
     public Event createEvent(@RequestBody CreateUpdateEventRequest request) {
         return service.createEvent(request);
     }
@@ -57,7 +57,6 @@ public class EventController {
     public String testAttendeeOnly(@AuthenticationPrincipal Integer userId) {
         return "Success! You are an ATTENDEE with user ID: " + userId;
     }
-
 
     @PutMapping("/events/{eventId}")
     public Optional<Event> updateEvents(@PathVariable Integer eventId, @RequestBody CreateUpdateEventRequest request) {

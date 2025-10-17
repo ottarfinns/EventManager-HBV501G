@@ -82,7 +82,6 @@ public class EventManagerApplication {
                     LocalDateTime.now().plusDays(10),
                     100,
                     null,
-                    null,
                     null
             );
             //good request
@@ -93,8 +92,7 @@ public class EventManagerApplication {
                     LocalDateTime.now().plusDays(10),
                     1,
                     0.0,
-                    venue,
-                    organizer
+                    venue.getId()
             );
             Event badEvent = service.createEvent(badEventReq);
             Event goodEvent = service.createEvent(goodEventReq);

@@ -48,7 +48,7 @@ public class Event {
             eventType type,
             String description,
             LocalDateTime dateTime,
-            int maxPeople,
+            Integer maxPeople,
             Double price,
             Venue venue,
             Organizer organizer,

@@ -1,12 +1,11 @@
 package is.hi.hbv501g.eventmanager.Services;
 
-import is.hi.hbv501g.eventmanager.Persistence.Entities.Attendee;
-import is.hi.hbv501g.eventmanager.Persistence.Entities.Event;
-import is.hi.hbv501g.eventmanager.Persistence.Entities.Organizer;
-import is.hi.hbv501g.eventmanager.Persistence.Entities.Ticket;
+import is.hi.hbv501g.eventmanager.Persistence.Entities.*;
 import is.hi.hbv501g.eventmanager.Requests.CreateUpdateEventRequest;
 import is.hi.hbv501g.eventmanager.Requests.CreateUpdateTicketRequest;
 import is.hi.hbv501g.eventmanager.Requests.CreateUpdateUserRequest;
+
+import java.util.Optional;
 
 /* Provides mapping from request objects to Entity objects with static methods */
 public class Mapper {
@@ -30,7 +29,7 @@ public class Mapper {
         );
     }
 
-    public static Event MapCreateEvent(CreateUpdateEventRequest request) {
+    public static Event MapCreateEvent(CreateUpdateEventRequest request, Optional<Venue> optionalVenue, Optional<Organizer> optionalOrganizer) {
         return new Event(
                 request.name,
                 request.type,
@@ -38,8 +37,8 @@ public class Mapper {
                 request.dateTime,
                 request.maxPeople,
                 request.price,
-                request.venue,
-                request.organizer,
+                optionalVenue.orElse(null),
+                optionalOrganizer.orElse(null),
                 true
         );
     }
