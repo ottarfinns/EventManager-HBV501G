@@ -7,10 +7,7 @@ import is.hi.hbv501g.eventmanager.Services.EventService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -28,6 +25,12 @@ public class EventController {
     public List<Event> getEvents(@RequestBody(required = false) EventFilterRequest request) {
         return service.getEvents(request, true);
     }
+
+    @GetMapping("/events/{id}")
+    public Event getEventById(@PathVariable int id) {
+        return service.getEventById(id);
+    }
+
 
     @PostMapping("/events")
     //@PreAuthorize("isAuthenticated()")
