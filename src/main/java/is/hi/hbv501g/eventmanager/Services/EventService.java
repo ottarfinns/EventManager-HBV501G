@@ -10,6 +10,6 @@ import java.util.Optional;
 public interface EventService {
      Event createEvent(Integer organizerId, CreateUpdateEventRequest request);
      List<Event> getEvents(EventFilterRequest request, boolean getActiveOnly);
-     Optional<Event> updateEvent(Integer eventId, Integer organizerId, CreateUpdateEventRequest request);
+     Event updateEvent(Integer eventId, Integer organizerId, CreateUpdateEventRequest request);
      Event getEventById(int id);
 }

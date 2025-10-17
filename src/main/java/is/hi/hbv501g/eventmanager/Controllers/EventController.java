@@ -65,7 +65,7 @@ public class EventController {
 
     @PutMapping("/events/{eventId}")
     @PreAuthorize("hasRole('ORGANIZER')")
-    public Optional<Event> updateEvents(@PathVariable Integer eventId, @RequestBody CreateUpdateEventRequest request, @AuthenticationPrincipal Integer userId) {
+    public Event updateEvents(@PathVariable Integer eventId, @RequestBody CreateUpdateEventRequest request, @AuthenticationPrincipal Integer userId) {
         return service.updateEvent(eventId, userId, request);
     }
 }

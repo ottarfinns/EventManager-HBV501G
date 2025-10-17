@@ -13,6 +13,7 @@ import is.hi.hbv501g.eventmanager.Services.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 import static is.hi.hbv501g.eventmanager.Persistence.Repositories.EventSpecs.*;
@@ -83,29 +84,36 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
-    public Optional<Event> updateEvent(Integer eventId, Integer organizerId, CreateUpdateEventRequest request) {
+    public Event updateEvent(Integer eventId, Integer organizerId, CreateUpdateEventRequest request) {
         //Validate request
-        if (request == null || eventId == null) return Optional.empty(); // Bad request
+        if (request == null || eventId == null) return null; // Bad request
 
         // get venue if needed
         Optional<Venue> optionalVenue;
         if (request.venueId != null) optionalVenue = venueRepository.findById(request.venueId);
-        else {
-            optionalVenue = Optional.empty();
-        }
+        else optionalVenue = Optional.empty();
+
 
         Optional<Event> optionalEvent = eventRepository.findById(eventId);
-        optionalEvent.ifPresent(e -> {
-            if (request.name != null) e.setName(request.name);
-            if (request.type != null) e.setType(request.type);
-            if (request.description != null) e.setDescription(request.description);
-            if (request.dateTime != null) e.setDateTime(request.dateTime);
-            if (request.maxPeople != null) e.setMaxPeople(request.maxPeople);
-            if (request.price != null) e.setPrice(request.price);
-            optionalVenue.ifPresent(e::setVenue);
-            eventRepository.save(e);
-        });
-        return optionalEvent;
+        if (optionalEvent.isEmpty()) throw new RuntimeException();
+        else {
+            var e = optionalEvent.get();
+
+            // check organizer id is the same
+            if (!Objects.equals(e.getOrganizer().getId(), organizerId)) throw new RuntimeException("different organizer");
+            else  {
+                if (request.name != null) e.setName(request.name);
+                if (request.type != null) e.setType(request.type);
+                if (request.description != null) e.setDescription(request.description);
+                if (request.dateTime != null) e.setDateTime(request.dateTime);
+                if (request.maxPeople != null) e.setMaxPeople(request.maxPeople);
+                if (request.price != null) e.setPrice(request.price);
+                optionalVenue.ifPresent(e::setVenue);
+                eventRepository.save(e);
+                return e;
+            }
+        }
+
     }
 
     public Event getEventById(int id) {
