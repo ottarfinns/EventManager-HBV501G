@@ -9,4 +9,6 @@ import java.util.List;
 public interface EventService {
      Event createEvent(CreateUpdateEventRequest request);
      List<Event> getEvents(EventFilterRequest request, boolean getActiveOnly);
+
+     Event getEventById(int id);
 }
