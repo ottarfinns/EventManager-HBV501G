@@ -9,7 +9,6 @@ import is.hi.hbv501g.eventmanager.Requests.CreateUpdateEventRequest;
 import is.hi.hbv501g.eventmanager.Requests.EventFilterRequest;
 import is.hi.hbv501g.eventmanager.Services.AccountService;
 import is.hi.hbv501g.eventmanager.Services.EventService;
-import is.hi.hbv501g.eventmanager.Services.JwtService;
 import is.hi.hbv501g.eventmanager.Services.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -25,15 +24,12 @@ public class EventServiceImpl implements EventService {
     @Autowired
     private final VenueRepository venueRepository;
     @Autowired
-    private final JwtService jwtService;
-    @Autowired
     private final AccountService accountService;
 
-    public EventServiceImpl(EventRepository repo, VenueRepository venueRepo, JwtService jwtServ, AccountService accountService)
+    public EventServiceImpl(EventRepository repo, VenueRepository venueRepo, AccountService accountService)
     {
         eventRepository = repo;
         this.venueRepository = venueRepo;
-        this.jwtService = jwtServ;
         this.accountService = accountService;
     }
 
@@ -89,7 +85,7 @@ public class EventServiceImpl implements EventService {
     @Override
     public Optional<Event> updateEvent(Integer eventId, Integer organizerId, CreateUpdateEventRequest request) {
         //Validate request
-        if (request == null || eventId == null) return null; // Bad request
+        if (request == null || eventId == null) return Optional.empty(); // Bad request
 
         // get venue if needed
         Optional<Venue> optionalVenue;
