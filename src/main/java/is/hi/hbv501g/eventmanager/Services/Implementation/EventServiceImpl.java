@@ -4,7 +4,6 @@ import is.hi.hbv501g.eventmanager.Persistence.Entities.Event;
 import is.hi.hbv501g.eventmanager.Persistence.Entities.Organizer;
 import is.hi.hbv501g.eventmanager.Persistence.Entities.Venue;
 import is.hi.hbv501g.eventmanager.Persistence.Repositories.EventRepository;
-import is.hi.hbv501g.eventmanager.Persistence.Repositories.VenueRepository;
 import is.hi.hbv501g.eventmanager.Requests.CreateUpdateEventRequest;
 import is.hi.hbv501g.eventmanager.Requests.EventFilterRequest;
 import is.hi.hbv501g.eventmanager.Services.AccountService;
@@ -23,19 +22,16 @@ public class EventServiceImpl implements EventService {
     @Autowired
     private final EventRepository eventRepository;
     @Autowired
-    private final VenueRepository venueRepository;
-    @Autowired
     private final AccountService accountService;
 
-    public EventServiceImpl(EventRepository repo, VenueRepository venueRepo, AccountService accountService)
+    public EventServiceImpl(EventRepository repo, AccountService accountService)
     {
         eventRepository = repo;
-        this.venueRepository = venueRepo;
         this.accountService = accountService;
     }
 
-    /*
-     * Takes in a request param of type CreateEventUserRequest, returns created User
+    /**
+     * Takes in a request param of type CreateUpdateEventRequest, validates and saves, returns created Event
      */
     public Event createEvent(Integer organizerId, CreateUpdateEventRequest request) {
         //Validate request
@@ -43,24 +39,16 @@ public class EventServiceImpl implements EventService {
                 || request.name == null
                 || request.name.isEmpty()
                 || request.price == null
-                || request.dateTime == null
                 || request.maxPeople == null
         ) {
             return null; //Failure state
-        }
-
-        // find venue
-        Optional<Venue> v = Optional.empty();
-        if (request.venueId != null && request.venueId != 0)
-        {
-            v = venueRepository.findById(request.venueId);
         }
 
         // find organizer
         var o = (Organizer) accountService.getAccountById(organizerId);
 
         Event s;
-        Event e = Mapper.MapCreateEvent(request, v, o);
+        Event e = Mapper.MapCreateEvent(request, o);
         // call repository.save
         s = eventRepository.save(e);
         return s;
@@ -71,17 +59,21 @@ public class EventServiceImpl implements EventService {
         if (request == null) {
             return eventRepository.findAll(onlyActive(getActiveOnly));
         } else {
-            return eventRepository.findAll(
-                    hasName(request.getName())
-                            .and(isType(request.getType()))
-                            .and(hasVenueId(request.getVenueId()))
-                            .and(dateAfter(request.getDateFrom()))
-                            .and(dateBefore(request.getDateTo()))
-                            .and(hasMaxOccupancy(request.getMaxOccupancy()))
-                            .and(priceGreaterThan(request.getMinPrice()))
-                            .and(priceLesserThan(request.getMaxPrice()))
-                            .and(hasOrganizerId(request.getOrganizerId()))
-            );
+            var spec = hasName(request.getName())
+                    .and(isType(request.getType()))
+                    .and(dateAfter(request.getDateFrom()))
+                    .and(dateBefore(request.getDateTo()))
+                    .and(hasMaxOccupancy(request.getMaxOccupancy()))
+                    .and(priceGreaterThan(request.getMinPrice()))
+                    .and(priceLesserThan(request.getMaxPrice()))
+                    .and(hasOrganizerId(request.getOrganizerId()));
+            var venue = request.getVenue();
+            if (venue != null) {
+                spec = spec.and(hasVenueAddress(venue.getAddress()))
+                        .and(hasVenuePostCode(venue.getPostCode()))
+                        .and(hasVenueName(venue.getVenueName()));
+            }
+            return eventRepository.findAll(spec);
         }
     }
 
@@ -89,12 +81,6 @@ public class EventServiceImpl implements EventService {
     public Event updateEvent(Integer eventId, Integer organizerId, CreateUpdateEventRequest request) {
         //Validate request
         if (request == null || eventId == null) return null; // Bad request
-
-        // get venue if needed
-        Optional<Venue> optionalVenue;
-        if (request.venueId != null) optionalVenue = venueRepository.findById(request.venueId);
-        else optionalVenue = Optional.empty();
-
 
         Optional<Event> optionalEvent = eventRepository.findById(eventId);
         if (optionalEvent.isEmpty()) throw new RuntimeException();
@@ -110,7 +96,12 @@ public class EventServiceImpl implements EventService {
                 if (request.dateTime != null) e.setDateTime(request.dateTime);
                 if (request.maxPeople != null) e.setMaxPeople(request.maxPeople);
                 if (request.price != null) e.setPrice(request.price);
-                optionalVenue.ifPresent(e::setVenue);
+                if (request.venue != null) {
+                    var v = request.venue;
+                    if (v.getAddress() != null) e.getVenue().setAddress(v.getAddress());
+                    if (v.getPostCode() != null) e.getVenue().setPostCode(v.getPostCode());
+                    if (v.getVenueName() != null) e.getVenue().setVenueName(v.getVenueName());
+                }
                 eventRepository.save(e);
                 return e;
             }

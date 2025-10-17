@@ -15,5 +15,5 @@ public class CreateUpdateEventRequest {
     public LocalDateTime dateTime;
     public Integer maxPeople;
     public Double price;
-    public Integer venueId;
+    public Venue venue;
 }

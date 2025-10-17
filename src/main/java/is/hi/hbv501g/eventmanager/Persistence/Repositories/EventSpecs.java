@@ -25,12 +25,30 @@ public class EventSpecs {
         );
     }
 
-    /** If venueId== null than spec is ignored **/
-    public static Specification<Event> hasVenueId(Long venueId) {
+    /** If address == null then spec is ignored **/
+    public static Specification<Event> hasVenueAddress(String address) {
         return ((root, query, criteriaBuilder) ->
-                venueId == null ?
+                address == null ?
                         criteriaBuilder.conjunction() :
-                        criteriaBuilder.equal(root.get("venue_id"), venueId)
+                        criteriaBuilder.equal(root.get("address"), address)
+        );
+    }
+
+    /** If postcode == null then spec is ignored **/
+    public static Specification<Event> hasVenuePostCode(String postcode) {
+        return ((root, query, criteriaBuilder) ->
+                postcode == null ?
+                        criteriaBuilder.conjunction() :
+                        criteriaBuilder.equal(root.get("post_code"), postcode)
+        );
+    }
+
+    /** If name == null then spec is ignored **/
+    public static Specification<Event> hasVenueName(String name) {
+        return ((root, query, criteriaBuilder) ->
+                name == null ?
+                        criteriaBuilder.conjunction() :
+                        criteriaBuilder.equal(root.get("venue_name"), name)
         );
     }
 
@@ -91,7 +109,7 @@ public class EventSpecs {
     public static Specification<Event> onlyActive(boolean getActiveOnly) {
         return ((root, query, criteriaBuilder) ->
                 getActiveOnly ?
-                        criteriaBuilder.equal(root.get("isActive"), true) :
+                        criteriaBuilder.equal(root.get("is_active"), true) :
                         criteriaBuilder.conjunction()
 
         );
