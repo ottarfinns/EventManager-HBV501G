@@ -4,7 +4,6 @@ import is.hi.hbv501g.eventmanager.Persistence.Entities.Event;
 import is.hi.hbv501g.eventmanager.Requests.CreateUpdateEventRequest;
 import is.hi.hbv501g.eventmanager.Requests.EventFilterRequest;
 import is.hi.hbv501g.eventmanager.Services.EventService;
-import is.hi.hbv501g.eventmanager.Services.JwtService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -12,7 +11,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @Controller
@@ -20,12 +18,8 @@ public class EventController {
     @Autowired
     private final EventService service;
 
-    @Autowired
-    private final JwtService jwtService;
-
-    public EventController(EventService service, JwtService jwtService) {
+    public EventController(EventService service) {
         this.service = service;
-        this.jwtService = jwtService;
     }
 
     @GetMapping("/events")

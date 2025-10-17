@@ -5,7 +5,6 @@ import is.hi.hbv501g.eventmanager.Requests.CreateUpdateEventRequest;
 import is.hi.hbv501g.eventmanager.Requests.EventFilterRequest;
 
 import java.util.List;
-import java.util.Optional;
 
 public interface EventService {
      Event createEvent(Integer organizerId, CreateUpdateEventRequest request);
