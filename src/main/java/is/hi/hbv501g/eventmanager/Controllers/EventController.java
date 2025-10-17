@@ -6,6 +6,7 @@ import is.hi.hbv501g.eventmanager.Requests.EventFilterRequest;
 import is.hi.hbv501g.eventmanager.Services.EventService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -39,9 +40,21 @@ public class EventController {
     }
 
     @GetMapping("/test-auth")
-    @PreAuthorize("isAuthenticated()")
-    public String testAuthentication() {
-        return "authentication success";
+//    @PreAuthorize("isAuthenticated()")
+    public String testAuthentication(@AuthenticationPrincipal Integer userId) {
+        return "Authentication success! Your user ID is: " + userId;
+    }
+
+    @GetMapping("/test-auth/organizer")
+    @PreAuthorize("hasRole('ORGANIZER')")
+    public String testOrganizerOnly(@AuthenticationPrincipal Integer userId) {
+        return "Success! You are an ORGANIZER with user ID: " + userId;
+    }
+
+    @GetMapping("/test-auth/attendee")
+    @PreAuthorize("hasRole('ATTENDEE')")
+    public String testAttendeeOnly(@AuthenticationPrincipal Integer userId) {
+        return "Success! You are an ATTENDEE with user ID: " + userId;
     }
 
 }
