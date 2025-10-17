@@ -5,8 +5,6 @@ import is.hi.hbv501g.eventmanager.Requests.CreateUpdateEventRequest;
 import is.hi.hbv501g.eventmanager.Requests.CreateUpdateTicketRequest;
 import is.hi.hbv501g.eventmanager.Requests.CreateUpdateUserRequest;
 
-import java.util.Optional;
-
 /* Provides mapping from request objects to Entity objects with static methods */
 public class Mapper {
     public static Attendee MapCreateAttendee(CreateUpdateUserRequest request) {

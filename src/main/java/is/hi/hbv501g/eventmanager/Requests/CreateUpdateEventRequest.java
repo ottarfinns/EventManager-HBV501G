@@ -1,6 +1,5 @@
 package is.hi.hbv501g.eventmanager.Requests;
 
-import is.hi.hbv501g.eventmanager.Persistence.Entities.Organizer;
 import is.hi.hbv501g.eventmanager.Persistence.Entities.Venue;
 import is.hi.hbv501g.eventmanager.Persistence.Entities.Event.eventType;
 import lombok.AllArgsConstructor;
