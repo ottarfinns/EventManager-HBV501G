@@ -1,6 +1,9 @@
 package is.hi.hbv501g.eventmanager.Persistence.Entities;
 
-import jakarta.persistence.*;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.persistence.Entity;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -14,6 +17,7 @@ import java.util.List;
 @NoArgsConstructor
 public class Organizer extends User{
     @OneToMany(mappedBy = "organizer")
+    @JsonIgnore
     private List<Event> events = new ArrayList<>();
 
     public Organizer(String username, String name, String email, String phoneNumber, String password) {
