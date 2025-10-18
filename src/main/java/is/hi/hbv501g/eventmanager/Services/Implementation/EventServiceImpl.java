@@ -1,67 +1,114 @@
 package is.hi.hbv501g.eventmanager.Services.Implementation;
 
 import is.hi.hbv501g.eventmanager.Persistence.Entities.Event;
+import is.hi.hbv501g.eventmanager.Persistence.Entities.Organizer;
 import is.hi.hbv501g.eventmanager.Persistence.Repositories.EventRepository;
 import is.hi.hbv501g.eventmanager.Requests.CreateUpdateEventRequest;
 import is.hi.hbv501g.eventmanager.Requests.EventFilterRequest;
+import is.hi.hbv501g.eventmanager.Services.AccountService;
 import is.hi.hbv501g.eventmanager.Services.EventService;
 import is.hi.hbv501g.eventmanager.Services.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 
 import static is.hi.hbv501g.eventmanager.Persistence.Repositories.EventSpecs.*;
 
 @Service
 public class EventServiceImpl implements EventService {
     @Autowired
-    private final EventRepository repository;
+    private final EventRepository eventRepository;
+    @Autowired
+    private final AccountService accountService;
 
-    public EventServiceImpl(EventRepository repo) {
-        repository = repo;
+    public EventServiceImpl(EventRepository repo, AccountService accountService)
+    {
+        eventRepository = repo;
+        this.accountService = accountService;
     }
 
-    /*
-     * Takes in a request param of type CreateEventUserRequest
-     * Returns the id of the successfully created event
+    /**
+     * Takes in a request param of type CreateUpdateEventRequest, validates and saves, returns created Event
      */
-    public Event createEvent(CreateUpdateEventRequest request) {
+    public Event createEvent(Integer organizerId, CreateUpdateEventRequest request) {
         //Validate request
         if (request == null
                 || request.name == null
                 || request.name.isEmpty()
                 || request.price == null
-                || request.venue == null
+                || request.maxPeople == null
         ) {
             return null; //Failure state
         }
+
+        // find organizer
+        var o = (Organizer) accountService.getAccountById(organizerId);
+
         Event s;
-        Event e = Mapper.MapCreateEvent(request);
+        Event e = Mapper.MapCreateEvent(request, o);
         // call repository.save
-        s = repository.save(e);
+        s = eventRepository.save(e);
         return s;
     }
 
     @Override
     public List<Event> getEvents(EventFilterRequest request, boolean getActiveOnly) {
         if (request == null) {
-            return repository.findAll(onlyActive(getActiveOnly));
+            return eventRepository.findAll(onlyActive(getActiveOnly));
         } else {
-            return repository.findAll(
-                    hasName(request.getName())
-                            .and(isType(request.getType()))
-                            .and(hasVenueId(request.getVenueId()))
-                            .and(dateAfter(request.getDateFrom()))
-                            .and(dateBefore(request.getDateTo()))
-                            .and(hasMaxOccupancy(request.getMaxOccupancy()))
-                            .and(priceGreaterThan(request.getMinPrice()))
-                            .and(priceLesserThan(request.getMaxPrice()))
-                            .and(hasOrganizerId(request.getOrganizerId()))
-            );
+            var spec = hasName(request.getName())
+                    .and(isType(request.getType()))
+                    .and(dateAfter(request.getDateFrom()))
+                    .and(dateBefore(request.getDateTo()))
+                    .and(hasMaxOccupancy(request.getMaxOccupancy()))
+                    .and(priceGreaterThan(request.getMinPrice()))
+                    .and(priceLesserThan(request.getMaxPrice()))
+                    .and(hasOrganizerId(request.getOrganizerId()));
+            var venue = request.getVenue();
+            if (venue != null) {
+                spec = spec.and(hasVenueAddress(venue.getAddress()))
+                        .and(hasVenuePostCode(venue.getPostCode()))
+                        .and(hasVenueName(venue.getVenueName()));
+            }
+            return eventRepository.findAll(spec);
         }
     }
 
+    @Override
+    public Event updateEvent(Integer eventId, Integer organizerId, CreateUpdateEventRequest request) {
+        //Validate request
+        if (request == null || eventId == null) return null; // Bad request
+
+        Optional<Event> optionalEvent = eventRepository.findById(eventId);
+        if (optionalEvent.isEmpty()) throw new RuntimeException();
+        else {
+            var e = optionalEvent.get();
+
+            // check organizer id is the same
+            if (!Objects.equals(e.getOrganizer().getId(), organizerId)) throw new RuntimeException("different organizer");
+            else  {
+                if (request.name != null) e.setName(request.name);
+                if (request.type != null) e.setType(request.type);
+                if (request.description != null) e.setDescription(request.description);
+                if (request.dateTime != null) e.setDateTime(request.dateTime);
+                if (request.maxPeople != null) e.setMaxPeople(request.maxPeople);
+                if (request.price != null) e.setPrice(request.price);
+                if (request.venue != null) {
+                    var v = request.venue;
+                    if (v.getAddress() != null) e.getVenue().setAddress(v.getAddress());
+                    if (v.getPostCode() != null) e.getVenue().setPostCode(v.getPostCode());
+                    if (v.getVenueName() != null) e.getVenue().setVenueName(v.getVenueName());
+                }
+                eventRepository.save(e);
+                return e;
+            }
+        }
+
+    }
+
     public Event getEventById(int id) {
-        return repository.findById(id).orElse(null);
+        return eventRepository.findById(id).orElse(null);
     }
 }

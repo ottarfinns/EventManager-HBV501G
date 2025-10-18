@@ -93,4 +93,18 @@ public class AccountServiceImpl implements AccountService {
         return 0;
 
     }
+
+    public User getAccountById(Integer userId) {
+        var optionalAttendee = attendeeRepository.findById(userId);
+        var optionalOrganizer = organizerRepository.findById(userId);
+        if (optionalAttendee.isPresent()) {
+            return optionalAttendee.get();
+        }
+        else if (optionalOrganizer.isPresent()) {
+            return optionalOrganizer.get();
+        }
+        else {
+            throw new RuntimeException();
+        }
+    }
 }

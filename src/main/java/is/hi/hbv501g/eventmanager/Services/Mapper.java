@@ -1,9 +1,6 @@
 package is.hi.hbv501g.eventmanager.Services;
 
-import is.hi.hbv501g.eventmanager.Persistence.Entities.Attendee;
-import is.hi.hbv501g.eventmanager.Persistence.Entities.Event;
-import is.hi.hbv501g.eventmanager.Persistence.Entities.Organizer;
-import is.hi.hbv501g.eventmanager.Persistence.Entities.Ticket;
+import is.hi.hbv501g.eventmanager.Persistence.Entities.*;
 import is.hi.hbv501g.eventmanager.Requests.CreateUpdateEventRequest;
 import is.hi.hbv501g.eventmanager.Requests.CreateUpdateTicketRequest;
 import is.hi.hbv501g.eventmanager.Requests.CreateUpdateUserRequest;
@@ -30,7 +27,7 @@ public class Mapper {
         );
     }
 
-    public static Event MapCreateEvent(CreateUpdateEventRequest request) {
+    public static Event MapCreateEvent(CreateUpdateEventRequest request, Organizer organizer) {
         return new Event(
                 request.name,
                 request.type,
@@ -39,7 +36,7 @@ public class Mapper {
                 request.maxPeople,
                 request.price,
                 request.venue,
-                request.organizer,
+                organizer,
                 true
         );
     }

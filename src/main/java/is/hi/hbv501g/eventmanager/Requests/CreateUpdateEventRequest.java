@@ -1,6 +1,5 @@
 package is.hi.hbv501g.eventmanager.Requests;
 
-import is.hi.hbv501g.eventmanager.Persistence.Entities.Organizer;
 import is.hi.hbv501g.eventmanager.Persistence.Entities.Venue;
 import is.hi.hbv501g.eventmanager.Persistence.Entities.Event.eventType;
 import lombok.AllArgsConstructor;
@@ -9,34 +8,11 @@ import java.time.LocalDateTime;
 
 @AllArgsConstructor
 public class CreateUpdateEventRequest {
-    public Integer id; //only for update
     public String name;
     public eventType type;
     public String description;
     public LocalDateTime dateTime;
-    public int maxPeople;
+    public Integer maxPeople;
     public Double price;
     public Venue venue;
-    public Organizer organizer;
-
-    //Constructor for Create
-    public CreateUpdateEventRequest(
-            String name,
-            eventType type,
-            String description, //optional
-            LocalDateTime dateTime,
-            int maxPeople,
-            Double price,
-            Venue venue,
-            Organizer organizer
-    ) {
-        this.name = name;
-        this.type = type;
-        this.description = description;
-        this.dateTime = dateTime;
-        this.maxPeople = maxPeople;
-        this.price = price;
-        this.venue = venue;
-        this.organizer = organizer;
-    }
 }

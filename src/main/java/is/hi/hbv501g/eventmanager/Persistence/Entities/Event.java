@@ -19,7 +19,7 @@ public class Event {
     private LocalDateTime dateTime;
     private int maxPeople;
     private @NonNull Double price;
-    @ManyToOne(fetch = FetchType.LAZY)
+    @Embedded
     private @NonNull Venue venue;
     @ManyToOne(fetch = FetchType.LAZY)
     private Organizer organizer;

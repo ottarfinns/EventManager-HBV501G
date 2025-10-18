@@ -34,9 +34,9 @@ public class EventController {
 
 
     @PostMapping("/events")
-    //@PreAuthorize("isAuthenticated()")
-    public Event createEvent(@RequestBody CreateUpdateEventRequest request) {
-        return service.createEvent(request);
+    @PreAuthorize("hasRole('ORGANIZER')")
+    public Event createEvent(@RequestBody CreateUpdateEventRequest request, @AuthenticationPrincipal Integer userId) {
+        return service.createEvent(userId, request);
     }
 
     @GetMapping("/test-auth")
@@ -57,4 +57,9 @@ public class EventController {
         return "Success! You are an ATTENDEE with user ID: " + userId;
     }
 
+    @PutMapping("/events/{eventId}")
+    @PreAuthorize("hasRole('ORGANIZER')")
+    public Event updateEvents(@PathVariable Integer eventId, @RequestBody CreateUpdateEventRequest request, @AuthenticationPrincipal Integer userId) {
+        return service.updateEvent(eventId, userId, request);
+    }
 }

@@ -7,8 +7,8 @@ import is.hi.hbv501g.eventmanager.Requests.EventFilterRequest;
 import java.util.List;
 
 public interface EventService {
-     Event createEvent(CreateUpdateEventRequest request);
+     Event createEvent(Integer organizerId, CreateUpdateEventRequest request);
      List<Event> getEvents(EventFilterRequest request, boolean getActiveOnly);
-
+     Event updateEvent(Integer eventId, Integer organizerId, CreateUpdateEventRequest request);
      Event getEventById(int id);
 }
