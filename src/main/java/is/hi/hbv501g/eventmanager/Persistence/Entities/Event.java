@@ -1,5 +1,6 @@
 package is.hi.hbv501g.eventmanager.Persistence.Entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -22,6 +23,7 @@ public class Event {
     @Embedded
     private @NonNull Venue venue;
     @ManyToOne(fetch = FetchType.LAZY)
+    @JsonIgnore
     private Organizer organizer;
     private boolean isActive;
 

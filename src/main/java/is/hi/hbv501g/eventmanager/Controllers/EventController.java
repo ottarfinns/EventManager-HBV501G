@@ -5,10 +5,12 @@ import is.hi.hbv501g.eventmanager.Requests.CreateUpdateEventRequest;
 import is.hi.hbv501g.eventmanager.Requests.EventFilterRequest;
 import is.hi.hbv501g.eventmanager.Services.EventService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
@@ -29,7 +31,11 @@ public class EventController {
 
     @GetMapping("/events/{id}")
     public Event getEventById(@PathVariable int id) {
-        return service.getEventById(id);
+        Event event = service.getEventById(id);
+        if (event == null) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, String.format("Event with id %s not found", id));
+        }
+        return event;
     }
 
 
