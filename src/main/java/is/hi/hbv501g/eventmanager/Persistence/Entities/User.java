@@ -1,5 +1,6 @@
 package is.hi.hbv501g.eventmanager.Persistence.Entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -20,8 +21,11 @@ public abstract class User {
     private Integer id;
     private @NonNull String username;
     private @NonNull String name;
+    @JsonIgnore
     private @NonNull String email;
+    @JsonIgnore
     private @Nullable String phoneNumber;
+    @JsonIgnore
     private @NonNull String password;
 
     public User(String username, String name, String email, String phoneNumber, String password){

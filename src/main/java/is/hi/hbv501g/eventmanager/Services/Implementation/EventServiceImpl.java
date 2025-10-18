@@ -43,8 +43,10 @@ public class EventServiceImpl implements EventService {
             return null; //Failure state
         }
 
-        // find organizer
-        var o = (Organizer) accountService.getAccountById(organizerId);
+        var user = accountService.getAccountById(organizerId);
+        if (!(user instanceof Organizer o)) {
+            throw new RuntimeException("User is not a organizer");
+        }
 
         Event s;
         Event e = Mapper.MapCreateEvent(request, o);
