@@ -4,9 +4,12 @@ import is.hi.hbv501g.eventmanager.Persistence.Entities.Ticket;
 import is.hi.hbv501g.eventmanager.Requests.CreateUpdateTicketRequest;
 import is.hi.hbv501g.eventmanager.Services.TicketService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
@@ -24,17 +27,21 @@ public class TicketController {
      * Takes in a request param of type CreateUpdateTicketRequest
      * Returns the successfully created ticket
      */
-    @PostMapping("/ticket")
-    public Ticket createTicket(@RequestBody CreateUpdateTicketRequest request) {
-        return service.createTicket(request);
+    @PostMapping("/tickets")
+    @PreAuthorize("hasRole('ATTENDEE')")
+    public Ticket createTicket(@RequestBody CreateUpdateTicketRequest request, @AuthenticationPrincipal int userId) {
+        request.setAttendeeId(userId);
+        Ticket ticket = service.createTicket(request);
+        if (ticket == null) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Ticket could not be created");
+        }
+        return ticket;
     }
 
 
-    @GetMapping("/attendee/{id}/tickets")
-    public List<Ticket> getTicketByUserId(@PathVariable int pathId, @AuthenticationPrincipal int userId){
-        if(pathId != userId){
-            return null;
-        }
+    @GetMapping("/tickets")
+    @PreAuthorize("hasRole('ATTENDEE')")
+    public List<Ticket> getTicketByUserId( @AuthenticationPrincipal int userId){
         return service.getTicketByUserId(userId);
     }
 }
