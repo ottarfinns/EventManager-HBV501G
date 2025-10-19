@@ -36,24 +36,12 @@ public class TicketServiceImpl implements TicketService {
      */
     public Ticket createTicket(CreateUpdateTicketRequest request) {
 
-        if (request == null) {
-            //log.warn("createTicket: request is null");
-            return null;
+        if (request == null || request.attendeeId == null || request.attendeeId == 0 || request.price == null || request.eventId == null || request.eventId == 0) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Missing required fields");
         }
 
-        if (request.attendeeId == null || request.attendeeId == 0) {
-            //log.warn("createTicket: invalid attendeeId={}", request.attendeeId);
-            return null;
-        }
-
-        if (request.price == null || request.price < 0) {
-            //log.warn("createTicket: invalid price={}", request.price);
-            return null;
-        }
-
-        if (request.eventId == null || request.eventId == 0) {
-            //log.warn("createTicket: invalid eventId={}", request.eventId);
-            return null;
+        if (request.price < 0) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Price has to be greater or equal 0");
         }
 
 
@@ -62,9 +50,7 @@ public class TicketServiceImpl implements TicketService {
         int ticketCount = repository.countByEventId(request.eventId);
         int maxOccupancy = event.getMaxPeople();
         if (ticketCount >= maxOccupancy) {
-            //throw new IllegalStateException("Event is full!");
-            log.warn("Ticket count exceeds max occupancy limit, ticket not created");
-            return null;
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Event is full — cannot create more tickets");
         }
 
 
@@ -73,8 +59,7 @@ public class TicketServiceImpl implements TicketService {
         boolean alreadyHasTicket = tickets.stream()
                 .anyMatch(t -> t.getEventId().equals(request.eventId));
         if (alreadyHasTicket) {
-            log.warn("Ticket with event id {} already exists for this user", request.eventId);
-            return null; //can also return the ticket that matches
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "User already has a ticket for this event");
         }
 
         Ticket s;
@@ -85,7 +70,7 @@ public class TicketServiceImpl implements TicketService {
     }
 
     public Ticket getTicketById(Integer ticketId) {
-        return repository.findById(ticketId).orElse(null);
+        return repository.findById(ticketId).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Ticket with ID " + ticketId + " not found"));
     }
 
     public List<Ticket> getTicketByUserId(Integer attendeeId) {
