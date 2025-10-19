@@ -9,7 +9,10 @@ import is.hi.hbv501g.eventmanager.Services.AccountService;
 import is.hi.hbv501g.eventmanager.Services.EventService;
 import is.hi.hbv501g.eventmanager.Services.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
+
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -40,12 +43,14 @@ public class EventServiceImpl implements EventService {
                 || request.price == null
                 || request.maxPeople == null
         ) {
-            return null; //Failure state
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Missing required fields");
         }
 
         var user = accountService.getAccountById(organizerId);
         if (!(user instanceof Organizer o)) {
-            throw new RuntimeException("User is not a organizer");
+            throw new ResponseStatusException(
+                    HttpStatus.FORBIDDEN, "User is not an organizer"
+            );
         }
 
         Event s;
@@ -81,7 +86,7 @@ public class EventServiceImpl implements EventService {
     @Override
     public Event updateEvent(Integer eventId, Integer organizerId, CreateUpdateEventRequest request) {
         //Validate request
-        if (request == null || eventId == null) return null; // Bad request
+        if (request == null || eventId == null) throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Missing required event data"); // Bad request
 
         Optional<Event> optionalEvent = eventRepository.findById(eventId);
         if (optionalEvent.isEmpty()) throw new RuntimeException();
@@ -89,7 +94,7 @@ public class EventServiceImpl implements EventService {
             var e = optionalEvent.get();
 
             // check organizer id is the same
-            if (!Objects.equals(e.getOrganizer().getId(), organizerId)) throw new RuntimeException("different organizer");
+            if (!Objects.equals(e.getOrganizer().getId(), organizerId)) throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Organizer does not own this event");
             else  {
                 if (request.name != null) e.setName(request.name);
                 if (request.type != null) e.setType(request.type);
@@ -111,6 +116,6 @@ public class EventServiceImpl implements EventService {
     }
 
     public Event getEventById(int id) {
-        return eventRepository.findById(id).orElse(null);
+        return eventRepository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Event with ID " + id + " not found"));
     }
 }

@@ -4,9 +4,11 @@ import is.hi.hbv501g.eventmanager.Persistence.Repositories.AttendeeRepository;
 import is.hi.hbv501g.eventmanager.Persistence.Repositories.OrganizerRepository;
 import is.hi.hbv501g.eventmanager.Services.LoginService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 @Service
 public class LoginServiceImpl implements LoginService {
@@ -26,13 +28,17 @@ public class LoginServiceImpl implements LoginService {
         return attendeeRepository.findByUsername(username)
                 .filter(attendee -> encoder.matches(rawPassword, attendee.getPassword()))
                 .map(a -> a.getId())
-                .orElse(0);
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.UNAUTHORIZED, "Invalid username or password"
+                ));
     }
 
     public Integer organizerLogin(String username, String rawPassword) {
         return organizerRepository.findByUsername(username)
                 .filter(organizer -> encoder.matches(rawPassword, organizer.getPassword()))
                 .map(o -> o.getId())
-                .orElse(0);
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.UNAUTHORIZED, "Invalid username or password"
+                ));
     }
 }
