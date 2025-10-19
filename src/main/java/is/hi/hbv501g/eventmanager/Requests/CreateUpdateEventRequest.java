@@ -1,7 +1,7 @@
 package is.hi.hbv501g.eventmanager.Requests;
 
+import is.hi.hbv501g.eventmanager.Persistence.Entities.EventType;
 import is.hi.hbv501g.eventmanager.Persistence.Entities.Venue;
-import is.hi.hbv501g.eventmanager.Persistence.Entities.Event.eventType;
 import lombok.AllArgsConstructor;
 
 import java.time.LocalDateTime;
@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class CreateUpdateEventRequest {
     public String name;
-    public eventType type;
+    public EventType type;
     public String description;
     public LocalDateTime dateTime;
     public Integer maxPeople;

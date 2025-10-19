@@ -1,6 +1,7 @@
 package is.hi.hbv501g.eventmanager.Persistence.Repositories;
 
 import is.hi.hbv501g.eventmanager.Persistence.Entities.Event;
+import is.hi.hbv501g.eventmanager.Persistence.Entities.EventType;
 import org.springframework.data.jpa.domain.Specification;
 
 import java.math.BigDecimal;
@@ -17,11 +18,11 @@ public class EventSpecs {
     }
 
     /** If type== null than spec is ignored **/
-    public static Specification<Event> isType(Event.eventType type) {
+    public static Specification<Event> isType(EventType type) {
         return ((root, query, criteriaBuilder) ->
                 type == null ?
                         criteriaBuilder.conjunction() :
-                        criteriaBuilder.equal(root.get("type"), type.toString())
+                        criteriaBuilder.equal(root.get("type"), type)
         );
     }
 
@@ -109,7 +110,7 @@ public class EventSpecs {
     public static Specification<Event> onlyActive(boolean getActiveOnly) {
         return ((root, query, criteriaBuilder) ->
                 getActiveOnly ?
-                        criteriaBuilder.equal(root.get("isActive"), true) :
+                        criteriaBuilder.equal(root.get("is_active"), true) :
                         criteriaBuilder.conjunction()
 
         );
