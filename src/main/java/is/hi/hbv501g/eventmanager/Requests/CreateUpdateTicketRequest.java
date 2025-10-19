@@ -1,9 +1,14 @@
 package is.hi.hbv501g.eventmanager.Requests;
 
-import lombok.AllArgsConstructor;
 import is.hi.hbv501g.eventmanager.Persistence.Entities.Ticket.Status;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @AllArgsConstructor
+@NoArgsConstructor
+@Getter @Setter
 public class CreateUpdateTicketRequest {
     public Integer id;
     public Integer attendeeId;
@@ -13,8 +18,8 @@ public class CreateUpdateTicketRequest {
 
 
     //Constructor for Create
-    public CreateUpdateTicketRequest(Integer attendeeId, Integer eventId, Double price) {
-        this.attendeeId = attendeeId;
+    public CreateUpdateTicketRequest(Integer eventId, Double price) {
+//        this.attendeeId = attendeeId;
         this.eventId = eventId;
         this.price = price;
     }
