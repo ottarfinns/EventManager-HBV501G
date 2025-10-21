@@ -9,9 +9,11 @@ import is.hi.hbv501g.eventmanager.Requests.CreateUpdateUserRequest;
 import is.hi.hbv501g.eventmanager.Services.AccountService;
 import is.hi.hbv501g.eventmanager.Services.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.regex.Pattern;
 
@@ -41,21 +43,25 @@ public class AccountServiceImpl implements AccountService {
                 || request.name == null
                 || request.password == null
                 || request.email == null
-                || request.isOrganizer == null
-                || !Pattern.matches(emailRegex,request.email) // check if email pattern matches
-                || request.password.length() < 4 // Check password length
-        ) {
-            return 0; // Failure state
+                || request.isOrganizer == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Missing required fields");
+        }
+        if (!Pattern.matches(emailRegex, request.email)) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid email");
+        }
+        if (request.password.length() < 4) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Password must be at least 4 characters");
         }
 
         User s;
         if (request.isOrganizer) {
             // Organizer
 
-            if( !organizerRepository.findByUsername(request.username).isEmpty() // check if usename taken
-                    || !organizerRepository.findByEmail(request.email).isEmpty() // check if email used
+            if( organizerRepository.findByUsername(request.username).isPresent() // check if usename taken
+                    || attendeeRepository.findByUsername(request.username).isPresent()
+                    || organizerRepository.findByEmail(request.email).isPresent() // check if email used
             ) {
-                return 0;
+                throw new ResponseStatusException(HttpStatus.CONFLICT, "Username already taken");
             }
             // Map
             Organizer o = Mapper.MapCreateOrganizer(request);
@@ -67,10 +73,11 @@ public class AccountServiceImpl implements AccountService {
         } else {
             // Attendee
 
-            if( !attendeeRepository.findByUsername(request.username).isEmpty() // check if username taken
-                    || !attendeeRepository.findByEmail(request.email).isEmpty() // check if email taken
+            if( attendeeRepository.findByUsername(request.username).isPresent() // check if username taken
+                    || attendeeRepository.findByEmail(request.email).isPresent() // check if email taken
+                    || organizerRepository.findByUsername(request.username).isPresent()
             ) {
-                return 0;
+                throw new ResponseStatusException(HttpStatus.CONFLICT, "Username already taken");
             }
 
             // Map
@@ -92,5 +99,22 @@ public class AccountServiceImpl implements AccountService {
         // Assume id is set, use that to look up the user. Don´t let users update isOrganizer.
         return 0;
 
+    }
+
+    public User getAccountById(Integer userId) {
+        var optionalAttendee = attendeeRepository.findById(userId);
+        var optionalOrganizer = organizerRepository.findById(userId);
+        if (optionalAttendee.isPresent()) {
+            return optionalAttendee.get();
+        }
+        else if (optionalOrganizer.isPresent()) {
+            return optionalOrganizer.get();
+        }
+        else {
+            throw new ResponseStatusException(
+                    HttpStatus.NOT_FOUND,
+                    "User with ID " + userId + " not found"
+            );
+        }
     }
 }

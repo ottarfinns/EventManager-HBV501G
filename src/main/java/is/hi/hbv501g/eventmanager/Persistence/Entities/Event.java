@@ -1,5 +1,6 @@
 package is.hi.hbv501g.eventmanager.Persistence.Entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -14,38 +15,23 @@ public class Event {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
     private @NonNull String name;
-    private eventType type;
+    private EventType type;
     private String description;
     private LocalDateTime dateTime;
     private int maxPeople;
     private @NonNull Double price;
-    @ManyToOne(fetch = FetchType.LAZY)
+    @Embedded
     private @NonNull Venue venue;
     @ManyToOne(fetch = FetchType.LAZY)
+    @JsonIgnore
     private Organizer organizer;
     private boolean isActive;
 
-    public enum eventType {
-        conference,
-        seminar,
-        workshop,
-        concert,
-        festival,
-        exhibition,
-        sports,
-        charity,
-        fundraiser,
-        competition,
-        fashion,
-        cultural,
-        party,
-        other
-    }
 
 
     public Event(
             String name,
-            eventType type,
+            EventType type,
             String description,
             LocalDateTime dateTime,
             int maxPeople,

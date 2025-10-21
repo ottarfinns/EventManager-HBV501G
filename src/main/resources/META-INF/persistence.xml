@@ -10,15 +10,6 @@
         <class>is.hi.hbv501g.eventmanager.Persistence.Entities.Organizer</class>
         <class>is.hi.hbv501g.eventmanager.Persistence.Entities.Event</class>
         <class>is.hi.hbv501g.eventmanager.Persistence.Entities.Attendee</class>
-        <class>is.hi.hbv501g.eventmanager.Persistence.Entities.Venue</class>
-
-        <properties>
-            <!-- database connection -->
-            <property name="jakarta.persistence.jdbc.driver" value="org.sqlite.JDBC" />
-            <property name="jakarta.persistence.jdbc.url" value="jdbc:sqlite::memory:" />
-            <property name="jakarta.persistence.jdbc.user" value="testusername" />
-            <property name="jakarta.persistence.jdbc.password" value="testpassword" />
-            <property name="dialect" value="org.hibernate.dialect.SQLiteDialect" />
-        </properties>
-    </persistence-unit>
+        <class>is.hi.hbv501g.eventmanager.Persistence.Entities.Ticket</class>
+   </persistence-unit>
 </persistence>

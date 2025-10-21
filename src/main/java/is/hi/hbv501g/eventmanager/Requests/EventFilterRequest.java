@@ -1,10 +1,10 @@
 package is.hi.hbv501g.eventmanager.Requests;
 
-import is.hi.hbv501g.eventmanager.Persistence.Entities.Event.eventType;
+import is.hi.hbv501g.eventmanager.Persistence.Entities.EventType;
+import is.hi.hbv501g.eventmanager.Persistence.Entities.Venue;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.lang.Nullable;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -15,8 +15,8 @@ import java.time.LocalDateTime;
 
 public class EventFilterRequest {
     private String name;
-    private eventType type;
-    private Long venueId;
+    private EventType type;
+    private Venue venue;
     private LocalDateTime dateFrom;
     private LocalDateTime dateTo;
     private Integer maxOccupancy;
