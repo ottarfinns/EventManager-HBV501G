@@ -8,7 +8,6 @@ import lombok.Setter;
 
 @Entity
 @Getter
-//@Table(name="tickets")
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
@@ -34,7 +33,6 @@ public class Ticket {
     public enum Status {
         active,
         cancelled,
-        refunded,
         checked_in,
         expired
     }

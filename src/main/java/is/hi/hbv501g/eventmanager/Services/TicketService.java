@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface TicketService {
      Ticket createTicket(CreateUpdateTicketRequest request);
-     boolean cancelTicket(Integer ticketId);
+     void cancelTicket(Integer ticketId, CreateUpdateTicketRequest request);
      boolean cancelAllUser(Integer userId);
      boolean cancelAllEvent(Integer eventId);
      List<Ticket> getTicketByUserId(Integer userId);
