@@ -32,16 +32,12 @@ public class TicketServiceImpl implements TicketService {
 
     /*
      * Takes in a request param of type CreateUpdateTicketRequest
-     * Returns the id of the successfully created ticket
+     * Returns the successfully created ticket
      */
     public Ticket createTicket(CreateUpdateTicketRequest request) {
 
-        if (request == null || request.getAttendeeId() == null || request.getAttendeeId() == 0 || request.getPrice() == null || request.getEventId() == null || request.getEventId() == 0) {
+        if (request == null || request.getAttendeeId() == null || request.getAttendeeId() == 0 || request.getEventId() == null || request.getEventId() == 0) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Missing required fields");
-        }
-
-        if (request.getPrice() < 0) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Price has to be greater or equal 0");
         }
 
 
@@ -62,9 +58,10 @@ public class TicketServiceImpl implements TicketService {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "User already has a ticket for this event");
         }
 
+        //create and save ticket to repository
         Ticket s;
-        Ticket t = Mapper.MapCreateTicket(request);
-        //call repository.save
+        Ticket t = Mapper.MapCreateTicket(request, event.getPrice());
+
         s = repository.save(t);
         return s;
     }

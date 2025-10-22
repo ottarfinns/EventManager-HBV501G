@@ -41,11 +41,11 @@ public class Mapper {
         );
     }
 
-    public static Ticket MapCreateTicket(CreateUpdateTicketRequest request) {
+    public static Ticket MapCreateTicket(CreateUpdateTicketRequest request, Double eventPrice) {
         return new Ticket(
                 request.getAttendeeId(),
                 request.getEventId(),
-                request.getPrice(),
+                eventPrice,
                 Ticket.Status.active
         );
     }
