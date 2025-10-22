@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
+import java.util.Objects;
 
 @Service
 public class TicketServiceImpl implements TicketService {
@@ -78,14 +79,32 @@ public class TicketServiceImpl implements TicketService {
         return repository.findByEventId(eventId);
     }
 
-    public boolean cancelTicket(Integer ticketId) {
-        Ticket t = getTicketById(ticketId);
-        if (t == null) {
-            return false;
+    public void cancelTicket(Integer userId, CreateUpdateTicketRequest request) {
+        //get by ticket id
+        if (request.getId()==null){
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Missing ticket ID");
         }
+        Ticket t = getTicketById(request.getId());
+        if (t == null) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Ticket with ID " + request.getEventId() + " not found");
+        }
+
+        //check whether user calling function owns this ticket
+        if (!Objects.equals(t.getAttendeeId(), userId)){
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Users can only cancel their own tickets");
+        }
+
+        //check status, can only cancel active ticket
+        if (t.getStatus()==Status.cancelled) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Ticket is cancelled already");
+        } else if (t.getStatus()==Status.checked_in) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Can't cancel used ticket");
+        } else if (t.getStatus()==Status.expired) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Can't cancel expired ticket");
+        }
+
         t.setStatus(Status.cancelled);
         repository.save(t);
-        return true;
     }
 
     public boolean cancelAllUser(Integer attendeeId) {

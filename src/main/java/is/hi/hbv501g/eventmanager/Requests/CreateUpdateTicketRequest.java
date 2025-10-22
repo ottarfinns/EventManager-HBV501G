@@ -21,4 +21,9 @@ public class CreateUpdateTicketRequest {
     public CreateUpdateTicketRequest(Integer eventId) {
         this.eventId = eventId;
     }
+
+    //Constructor for cancel
+    public CreateUpdateTicketRequest(Integer id, boolean cancel) {
+        this.id = id;
+    }
 }
