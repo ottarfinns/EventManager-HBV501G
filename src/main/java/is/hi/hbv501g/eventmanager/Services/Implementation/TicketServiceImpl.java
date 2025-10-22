@@ -36,18 +36,18 @@ public class TicketServiceImpl implements TicketService {
      */
     public Ticket createTicket(CreateUpdateTicketRequest request) {
 
-        if (request == null || request.attendeeId == null || request.attendeeId == 0 || request.price == null || request.eventId == null || request.eventId == 0) {
+        if (request == null || request.getAttendeeId() == null || request.getAttendeeId() == 0 || request.getPrice() == null || request.getEventId() == null || request.getEventId() == 0) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Missing required fields");
         }
 
-        if (request.price < 0) {
+        if (request.getPrice() < 0) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Price has to be greater or equal 0");
         }
 
 
         //ensure event has space
-        Event event = eventRepository.findById(request.eventId).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Event not found"));
-        int ticketCount = repository.countByEventId(request.eventId);
+        Event event = eventRepository.findById(request.getEventId()).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Event not found"));
+        int ticketCount = repository.countByEventId(request.getEventId());
         int maxOccupancy = event.getMaxPeople();
         if (ticketCount >= maxOccupancy) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Event is full — cannot create more tickets");
@@ -55,9 +55,9 @@ public class TicketServiceImpl implements TicketService {
 
 
         //return null if user already has a ticket for this event
-        List<Ticket> tickets = getTicketByUserId(request.attendeeId);
+        List<Ticket> tickets = getTicketByUserId(request.getAttendeeId());
         boolean alreadyHasTicket = tickets.stream()
-                .anyMatch(t -> t.getEventId().equals(request.eventId));
+                .anyMatch(t -> t.getEventId().equals(request.getEventId()));
         if (alreadyHasTicket) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "User already has a ticket for this event");
         }

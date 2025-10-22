@@ -10,11 +10,11 @@ import lombok.Setter;
 @NoArgsConstructor
 @Getter @Setter
 public class CreateUpdateTicketRequest {
-    public Integer id;
-    public Integer attendeeId;
-    public Integer eventId;
-    public Double price;
-    public Status status;
+    private Integer id;
+    private Integer attendeeId;
+    private Integer eventId;
+    private Double price;
+    private Status status;
 
 
     //Constructor for Create

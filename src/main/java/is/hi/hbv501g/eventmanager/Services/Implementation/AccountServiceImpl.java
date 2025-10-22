@@ -39,43 +39,43 @@ public class AccountServiceImpl implements AccountService {
     public Integer createAccount(CreateUpdateUserRequest request){
         // Validate request - check nulls, validate parameters
         if (request == null
-                || request.username == null
-                || request.name == null
-                || request.password == null
-                || request.email == null
-                || request.isOrganizer == null) {
+                || request.getUsername() == null
+                || request.getName() == null
+                || request.getPassword() == null
+                || request.getEmail() == null
+                || request.getIsOrganizer() == null) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Missing required fields");
         }
-        if (!Pattern.matches(emailRegex, request.email)) {
+        if (!Pattern.matches(emailRegex, request.getEmail())) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid email");
         }
-        if (request.password.length() < 4) {
+        if (request.getPassword().length() < 4) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Password must be at least 4 characters");
         }
 
         User s;
-        if (request.isOrganizer) {
+        if (request.getIsOrganizer()) {
             // Organizer
 
-            if( organizerRepository.findByUsername(request.username).isPresent() // check if usename taken
-                    || attendeeRepository.findByUsername(request.username).isPresent()
-                    || organizerRepository.findByEmail(request.email).isPresent() // check if email used
+            if( organizerRepository.findByUsername(request.getUsername()).isPresent() // check if usename taken
+                    || attendeeRepository.findByUsername(request.getUsername()).isPresent()
+                    || organizerRepository.findByEmail(request.getEmail()).isPresent() // check if email used
             ) {
                 throw new ResponseStatusException(HttpStatus.CONFLICT, "Username already taken");
             }
             // Map
             Organizer o = Mapper.MapCreateOrganizer(request);
             // Password hashing
-            o.setPassword(encoder.encode(request.password));
+            o.setPassword(encoder.encode(request.getPassword()));
             // call repository.save
             s = organizerRepository.save(o);
 
         } else {
             // Attendee
 
-            if( attendeeRepository.findByUsername(request.username).isPresent() // check if username taken
-                    || attendeeRepository.findByEmail(request.email).isPresent() // check if email taken
-                    || organizerRepository.findByUsername(request.username).isPresent()
+            if( attendeeRepository.findByUsername(request.getUsername()).isPresent() // check if username taken
+                    || attendeeRepository.findByEmail(request.getEmail()).isPresent() // check if email taken
+                    || organizerRepository.findByUsername(request.getUsername()).isPresent()
             ) {
                 throw new ResponseStatusException(HttpStatus.CONFLICT, "Username already taken");
             }
@@ -83,7 +83,7 @@ public class AccountServiceImpl implements AccountService {
             // Map
             Attendee a = Mapper.MapCreateAttendee(request);
             // Password hashing
-            a.setPassword(encoder.encode(request.password));
+            a.setPassword(encoder.encode(request.getPassword()));
             // call repository.save
             s = attendeeRepository.save(a);
 

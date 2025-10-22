@@ -9,33 +9,33 @@ import is.hi.hbv501g.eventmanager.Requests.CreateUpdateUserRequest;
 public class Mapper {
     public static Attendee MapCreateAttendee(CreateUpdateUserRequest request) {
         return new Attendee(
-                request.username,
-                request.name,
-                request.email,
-                request.phoneNumber,
-                request.password
+                request.getUsername(),
+                request.getName(),
+                request.getEmail(),
+                request.getPhoneNumber(),
+                request.getPassword()
             );
     }
 
     public static Organizer MapCreateOrganizer(CreateUpdateUserRequest request) {
         return new Organizer(
-                request.username,
-                request.name,
-                request.email,
-                request.phoneNumber,
-                request.password
+                request.getUsername(),
+                request.getName(),
+                request.getEmail(),
+                request.getPhoneNumber(),
+                request.getPassword()
         );
     }
 
     public static Event MapCreateEvent(CreateUpdateEventRequest request, Organizer organizer) {
         return new Event(
-                request.name,
-                request.type,
-                request.description,
-                request.dateTime,
-                request.maxPeople,
-                request.price,
-                request.venue,
+                request.getName(),
+                request.getType(),
+                request.getDescription(),
+                request.getDateTime(),
+                request.getMaxPeople(),
+                request.getPrice(),
+                request.getVenue(),
                 organizer,
                 true
         );
@@ -43,9 +43,9 @@ public class Mapper {
 
     public static Ticket MapCreateTicket(CreateUpdateTicketRequest request) {
         return new Ticket(
-                request.attendeeId,
-                request.eventId,
-                request.price,
+                request.getAttendeeId(),
+                request.getEventId(),
+                request.getPrice(),
                 Ticket.Status.active
         );
     }

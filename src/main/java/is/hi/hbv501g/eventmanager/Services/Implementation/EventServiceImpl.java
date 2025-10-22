@@ -38,10 +38,10 @@ public class EventServiceImpl implements EventService {
     public Event createEvent(Integer organizerId, CreateUpdateEventRequest request) {
         //Validate request
         if (request == null
-                || request.name == null
-                || request.name.isEmpty()
-                || request.price == null
-                || request.maxPeople == null
+                || request.getName() == null
+                || request.getName().isEmpty()
+                || request.getPrice() == null
+                || request.getMaxPeople() == null
         ) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Missing required fields");
         }
@@ -96,14 +96,14 @@ public class EventServiceImpl implements EventService {
             // check organizer id is the same
             if (!Objects.equals(e.getOrganizer().getId(), organizerId)) throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Organizer does not own this event");
             else  {
-                if (request.name != null) e.setName(request.name);
-                if (request.type != null) e.setType(request.type);
-                if (request.description != null) e.setDescription(request.description);
-                if (request.dateTime != null) e.setDateTime(request.dateTime);
-                if (request.maxPeople != null) e.setMaxPeople(request.maxPeople);
-                if (request.price != null) e.setPrice(request.price);
-                if (request.venue != null) {
-                    var v = request.venue;
+                if (request.getName() != null) e.setName(request.getName());
+                if (request.getType() != null) e.setType(request.getType());
+                if (request.getDescription() != null) e.setDescription(request.getDescription());
+                if (request.getDateTime() != null) e.setDateTime(request.getDateTime());
+                if (request.getMaxPeople() != null) e.setMaxPeople(request.getMaxPeople());
+                if (request.getPrice() != null) e.setPrice(request.getPrice());
+                if (request.getVenue() != null) {
+                    var v = request.getVenue();
                     if (v.getAddress() != null) e.getVenue().setAddress(v.getAddress());
                     if (v.getPostCode() != null) e.getVenue().setPostCode(v.getPostCode());
                     if (v.getVenueName() != null) e.getVenue().setVenueName(v.getVenueName());
