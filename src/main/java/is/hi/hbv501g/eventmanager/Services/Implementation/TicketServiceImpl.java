@@ -44,7 +44,7 @@ public class TicketServiceImpl implements TicketService {
 
         //ensure event has space
         Event event = eventRepository.findById(request.getEventId()).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Event not found"));
-        int ticketCount = repository.countByEventId(request.getEventId());
+        int ticketCount = repository.countByEventIdAndStatus(request.getEventId(), Status.active);
         int maxOccupancy = event.getMaxPeople();
         if (ticketCount >= maxOccupancy) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Event is full — cannot create more tickets");
@@ -79,12 +79,12 @@ public class TicketServiceImpl implements TicketService {
         return repository.findByEventId(eventId);
     }
 
-    public void cancelTicket(Integer userId, CreateUpdateTicketRequest request) {
-        //get by ticket id
-        if (request.getId()==null){
+    public Ticket cancelTicket(Integer userId, Integer ticketId, CreateUpdateTicketRequest request) {
+        //get ticket by id
+        if (ticketId==null || ticketId==0){
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Missing ticket ID");
         }
-        Ticket t = getTicketById(request.getId());
+        Ticket t = getTicketById(ticketId);
         if (t == null) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Ticket with ID " + request.getEventId() + " not found");
         }
@@ -105,6 +105,7 @@ public class TicketServiceImpl implements TicketService {
 
         t.setStatus(Status.cancelled);
         repository.save(t);
+        return t;
     }
 
     public boolean cancelAllUser(Integer attendeeId) {

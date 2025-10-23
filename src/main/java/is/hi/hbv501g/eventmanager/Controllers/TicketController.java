@@ -41,9 +41,13 @@ public class TicketController {
         return service.getTicketByUserId(userId);
     }
 
-    @PutMapping("/tickets")
+    @PutMapping("/tickets/{ticketId}")
     @PreAuthorize("hasRole('ATTENDEE')")
-    public void cancelTicket(@AuthenticationPrincipal int userId, @RequestBody CreateUpdateTicketRequest request){
-        service.cancelTicket(userId, request);
+    public Ticket updateTicketStatus(@AuthenticationPrincipal int userId, @RequestBody CreateUpdateTicketRequest request, @PathVariable int ticketId) {
+        if (request.getStatus()== Ticket.Status.cancelled) {
+            return service.cancelTicket(userId, ticketId, request);
+        } else{
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Can only update ticket status to cancelled");
+        }
     }
 }
