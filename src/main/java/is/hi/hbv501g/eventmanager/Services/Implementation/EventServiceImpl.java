@@ -31,9 +31,6 @@ public class EventServiceImpl implements EventService {
         this.accountService = accountService;
     }
 
-    /**
-     * Takes in a request param of type CreateUpdateEventRequest, validates and saves, returns created Event
-     */
     public Event createEvent(Integer organizerId, CreateUpdateEventRequest request) {
         //Validate request
         if (request == null
@@ -49,7 +46,7 @@ public class EventServiceImpl implements EventService {
             // throws if not found
             var organizer = accountService.getOrganizerById(organizerId);Event s;
 
-            Event e = Mapper.MapCreateEvent(request, organizer);
+            Event e = Mapper.Map(request, organizer);
             s = eventRepository.save(e);
             return s;
         }

@@ -61,7 +61,7 @@ public class TicketServiceImpl implements TicketService {
 
         //create and save ticket to repository
         Ticket s;
-        Ticket t = Mapper.MapCreateTicket(request, event.getPrice());
+        Ticket t = Mapper.Map(request, event.getPrice());
 
         s = repository.save(t);
         return s;

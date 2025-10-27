@@ -7,7 +7,7 @@ import is.hi.hbv501g.eventmanager.Requests.CreateUpdateUserRequest;
 
 /* Provides mapping from request objects to Entity objects with static methods */
 public class Mapper {
-    public static Attendee MapCreateAttendee(CreateUpdateUserRequest request) {
+    public static Attendee MapAttendee(CreateUpdateUserRequest request) {
         return new Attendee(
                 request.getUsername(),
                 request.getName(),
@@ -17,7 +17,7 @@ public class Mapper {
             );
     }
 
-    public static Organizer MapCreateOrganizer(CreateUpdateUserRequest request) {
+    public static Organizer MapOrganizer(CreateUpdateUserRequest request) {
         return new Organizer(
                 request.getUsername(),
                 request.getName(),
@@ -27,7 +27,7 @@ public class Mapper {
         );
     }
 
-    public static Event MapCreateEvent(CreateUpdateEventRequest request, Organizer organizer) {
+    public static Event Map(CreateUpdateEventRequest request, Organizer organizer) {
         return new Event(
                 request.getName(),
                 request.getType(),
@@ -41,7 +41,7 @@ public class Mapper {
         );
     }
 
-    public static Ticket MapCreateTicket(CreateUpdateTicketRequest request, Double eventPrice) {
+    public static Ticket Map(CreateUpdateTicketRequest request, Double eventPrice) {
         return new Ticket(
                 request.getAttendeeId(),
                 request.getEventId(),

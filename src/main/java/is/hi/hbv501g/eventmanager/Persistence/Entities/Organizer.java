@@ -11,6 +11,11 @@ import lombok.Setter;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Account class for event organizers,
+ * who are capable of managing events
+ * but will not book tickets to any events.
+ */
 @Entity
 @Table(name = "organizer")
 @Getter @Setter
