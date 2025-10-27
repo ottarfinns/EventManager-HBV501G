@@ -36,7 +36,7 @@ public class AccountServiceImpl implements AccountService {
      * Takes in a request param of type CreateUpdateUserRequest
      * Returns the id of the successfully created user account
      */
-    public Integer createAccount(CreateUpdateUserRequest request){
+    public User createAccount(CreateUpdateUserRequest request){
         // Validate request - check nulls, validate parameters
         if (request == null
                 || request.getUsername() == null
@@ -90,30 +90,37 @@ public class AccountServiceImpl implements AccountService {
         }
 
         // return userid
-        return s.getId();
+        return s;
     }
 
-    public Integer updateAccount(CreateUpdateUserRequest request){
+    /** Not Implemented **/
+    public User updateAccount(CreateUpdateUserRequest request){
         // Follow the same pattern as createAccount.
         // When validating, nulls are ok as that means we just don´t update those parameters.
         // Assume id is set, use that to look up the user. Don´t let users update isOrganizer.
-        return 0;
+        throw new ResponseStatusException(HttpStatus.NOT_IMPLEMENTED);
 
     }
 
-    public User getAccountById(Integer userId) {
-        var optionalAttendee = attendeeRepository.findById(userId);
-        var optionalOrganizer = organizerRepository.findById(userId);
-        if (optionalAttendee.isPresent()) {
-            return optionalAttendee.get();
-        }
-        else if (optionalOrganizer.isPresent()) {
+    public Organizer getOrganizerById(Integer organizerId) {
+        var optionalOrganizer = organizerRepository.findById(organizerId);if (optionalOrganizer.isPresent()) {
             return optionalOrganizer.get();
         }
         else {
             throw new ResponseStatusException(
                     HttpStatus.NOT_FOUND,
-                    "User with ID " + userId + " not found"
+                    "User with ID " + organizerId + " not found"
+            );
+        }
+    }
+    public Attendee getAttendeeById(Integer attendeeId) {
+        var optionalAttendee = attendeeRepository.findById(attendeeId);if (optionalAttendee.isPresent()) {
+            return optionalAttendee.get();
+        }
+        else {
+            throw new ResponseStatusException(
+                    HttpStatus.NOT_FOUND,
+                    "User with ID " + attendeeId + " not found"
             );
         }
     }

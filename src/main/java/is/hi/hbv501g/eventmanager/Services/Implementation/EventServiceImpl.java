@@ -46,7 +46,7 @@ public class EventServiceImpl implements EventService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Missing required fields");
         }
 
-        var user = accountService.getAccountById(organizerId);
+        var user = accountService.getOrganizerById(organizerId);
         if (!(user instanceof Organizer o)) {
             throw new ResponseStatusException(
                     HttpStatus.FORBIDDEN, "User is not an organizer"
