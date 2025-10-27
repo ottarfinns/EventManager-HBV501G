@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
-* Controller using Spring. Handles APIs for user accounts
+ * Spring REST API Controller, handles operations on user accounts.
  */
 @RestController
 @Controller
@@ -22,9 +22,10 @@ public class AccountController {
         this.service = service;
     }
 
-    /** Create endpoint
-    * Takes in a request param of type CreateUpdateUserRequest
-    * Returns the id of the successfully created user account
+    /**
+     * Account Creation endpoint
+     * @param request The CreateUpdateUserRequest for account creation.
+     * @return The successfully created user account
     */
     @PostMapping("/accounts")
     public User createAccount(@RequestBody CreateUpdateUserRequest request) {
