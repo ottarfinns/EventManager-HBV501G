@@ -72,7 +72,8 @@ public class EventServiceImpl implements EventService {
                     .and(hasMaxOccupancy(request.getMaxOccupancy()))
                     .and(priceGreaterThan(request.getMinPrice()))
                     .and(priceLesserThan(request.getMaxPrice()))
-                    .and(hasOrganizerId(request.getOrganizerId()));
+                    .and(hasOrganizerId(request.getOrganizerId()))
+                    .and(onlyActive(getActiveOnly));
             var venue = request.getVenue();
             if (venue != null) {
                 spec = spec.and(hasVenueAddress(venue.getAddress()))
