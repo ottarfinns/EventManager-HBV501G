@@ -1,7 +1,6 @@
 package is.hi.hbv501g.eventmanager.Services.Implementation;
 
 import is.hi.hbv501g.eventmanager.Persistence.Entities.Event;
-import is.hi.hbv501g.eventmanager.Persistence.Entities.Organizer;
 import is.hi.hbv501g.eventmanager.Persistence.Repositories.EventRepository;
 import is.hi.hbv501g.eventmanager.Requests.CreateUpdateEventRequest;
 import is.hi.hbv501g.eventmanager.Requests.EventFilterRequest;
@@ -46,18 +45,19 @@ public class EventServiceImpl implements EventService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Missing required fields");
         }
 
-        var user = accountService.getAccountById(organizerId);
-        if (!(user instanceof Organizer o)) {
+        try {
+            // throws if not found
+            var organizer = accountService.getOrganizerById(organizerId);Event s;
+
+            Event e = Mapper.MapCreateEvent(request, organizer);
+            s = eventRepository.save(e);
+            return s;
+        }
+        catch(Exception e) {
             throw new ResponseStatusException(
                     HttpStatus.FORBIDDEN, "User is not an organizer"
             );
         }
-
-        Event s;
-        Event e = Mapper.MapCreateEvent(request, o);
-        // call repository.save
-        s = eventRepository.save(e);
-        return s;
     }
 
     @Override
