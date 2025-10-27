@@ -1,7 +1,6 @@
 package is.hi.hbv501g.eventmanager.Services.Implementation;
 
 import is.hi.hbv501g.eventmanager.Persistence.Entities.Event;
-import is.hi.hbv501g.eventmanager.Persistence.Entities.Organizer;
 import is.hi.hbv501g.eventmanager.Persistence.Repositories.EventRepository;
 import is.hi.hbv501g.eventmanager.Requests.CreateUpdateEventRequest;
 import is.hi.hbv501g.eventmanager.Requests.EventFilterRequest;
