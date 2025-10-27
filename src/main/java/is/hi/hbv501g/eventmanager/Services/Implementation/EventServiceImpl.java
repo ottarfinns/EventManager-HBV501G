@@ -46,18 +46,19 @@ public class EventServiceImpl implements EventService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Missing required fields");
         }
 
-        var user = accountService.getOrganizerById(organizerId);
-        if (!(user instanceof Organizer o)) {
+        try {
+            // throws if not found
+            var organizer = accountService.getOrganizerById(organizerId);Event s;
+
+            Event e = Mapper.MapCreateEvent(request, organizer);
+            s = eventRepository.save(e);
+            return s;
+        }
+        catch(Exception e) {
             throw new ResponseStatusException(
                     HttpStatus.FORBIDDEN, "User is not an organizer"
             );
         }
-
-        Event s;
-        Event e = Mapper.MapCreateEvent(request, o);
-        // call repository.save
-        s = eventRepository.save(e);
-        return s;
     }
 
     @Override
