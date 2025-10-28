@@ -25,6 +25,6 @@ public class Image {
     private byte[] picByte;
 
     @OneToOne
-    @JoinColumn(name = "events", referencedColumnName = "id")
+    @JoinColumn(name = "event_id", referencedColumnName = "id")
     private Event event;
 }

@@ -5,11 +5,13 @@ import is.hi.hbv501g.eventmanager.Persistence.Repositories.ImageRepository;
 import is.hi.hbv501g.eventmanager.Services.ImageService;
 import is.hi.hbv501g.eventmanager.Utilities.ImageUtility;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.Optional;
 
 @Service
 public class ImageServiceImpl implements ImageService {
@@ -21,8 +23,11 @@ public class ImageServiceImpl implements ImageService {
     }
 
 
-    public Image getImageById(long id) {
-        return null;
+    public ResponseEntity<byte[]> findById(int id) {
+        final Optional<Image> image = imageRepository.findById(id);
+
+        return ResponseEntity.ok().contentType(MediaType.valueOf(image.get().getType()))
+                .body(ImageUtility.decompressImage(image.get().getPicByte()));
     }
 
     public ResponseEntity<String> uploadImage(MultipartFile file, int id) throws IOException {

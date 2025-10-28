@@ -57,6 +57,10 @@ public class EventController {
         return imageService.uploadImage(file, eventId);
 
     }
+    @GetMapping("/events/{id}/image")
+    public ResponseEntity<byte[]> getImage(@PathVariable int id) throws IOException {
+        return imageService.findById(id);
+    }
 
     @GetMapping("/test-auth")
 //    @PreAuthorize("isAuthenticated()")
