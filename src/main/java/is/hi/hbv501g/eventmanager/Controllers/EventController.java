@@ -17,6 +17,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.io.IOException;
 import java.util.List;
+
 /**
  * Spring REST API Controller, handles operations on events.
  */
@@ -35,6 +36,7 @@ public class EventController {
 
     /**
      * Get Events endpoint.
+     *
      * @param request The EventFilterRequest specifying which fields to filter by.
      *                If null, getEvents will get all events.
      * @return A list of all events that fit the filters if there are any.
@@ -46,6 +48,7 @@ public class EventController {
 
     /**
      * Get Event endpoint.
+     *
      * @param id The id of the event to get.
      * @return The event.
      */
@@ -61,8 +64,9 @@ public class EventController {
     /**
      * Event Creation endpoint.
      * User must be authenticated as an organizer.
+     *
      * @param request The CreateUpdateEventRequest for event creation.
-     * @param userId The currently authenticated user's id, from request header.
+     * @param userId  The currently authenticated user's id, from request header.
      * @return The successfully created event.
      */
     @PostMapping("/events")
@@ -93,18 +97,21 @@ public class EventController {
      *
      * @param eventId The id of the event the image is associated with.
      * @return A ResponseEntity containing a success message if the image was
-     *         found or an appropriate error message if it was not found.
+     * found or an appropriate error message if it was not found.
      * @throws IOException if an I/O error occurs while reading the image bytes.
      */
     @GetMapping("/events/{eventId}/image")
     public ResponseEntity<byte[]> getImage(@PathVariable int eventId) throws IOException {
         return imageService.findByEventId(eventId);
     }
+
+    /**
      * Event editing endpoint.
      * User must be authenticated as an organizer.
+     *
      * @param eventId The id of the event to be updated.
      * @param request The CreateUpdateEventRequest for event editing.
-     * @param userId The currently authenticated user's id, from request header.
+     * @param userId  The currently authenticated user's id, from request header.
      * @return The successfully updated event.
      */
     @PutMapping("/events/{eventId}")
