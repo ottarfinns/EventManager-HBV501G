@@ -32,10 +32,6 @@ public class AccountServiceImpl implements AccountService {
         attendeeRepository = aRepo; organizerRepository = oRepo;
     }
 
-    /*
-     * Takes in a request param of type CreateUpdateUserRequest
-     * Returns the id of the successfully created user account
-     */
     public User createAccount(CreateUpdateUserRequest request){
         // Validate request - check nulls, validate parameters
         if (request == null
@@ -64,7 +60,7 @@ public class AccountServiceImpl implements AccountService {
                 throw new ResponseStatusException(HttpStatus.CONFLICT, "Username already taken");
             }
             // Map
-            Organizer o = Mapper.MapCreateOrganizer(request);
+            Organizer o = Mapper.MapOrganizer(request);
             // Password hashing
             o.setPassword(encoder.encode(request.getPassword()));
             // call repository.save
@@ -81,7 +77,7 @@ public class AccountServiceImpl implements AccountService {
             }
 
             // Map
-            Attendee a = Mapper.MapCreateAttendee(request);
+            Attendee a = Mapper.MapAttendee(request);
             // Password hashing
             a.setPassword(encoder.encode(request.getPassword()));
             // call repository.save

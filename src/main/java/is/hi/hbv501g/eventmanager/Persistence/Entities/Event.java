@@ -3,14 +3,21 @@ package is.hi.hbv501g.eventmanager.Persistence.Entities;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.lang.NonNull;
 
 import java.time.LocalDateTime;
 
+/**
+ * Entity for Events.
+ */
 @Entity
 @Table(name = "events")
 @Getter @Setter
 @NoArgsConstructor
 public class Event {
+    /**
+     * Database key for an event.
+     */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;

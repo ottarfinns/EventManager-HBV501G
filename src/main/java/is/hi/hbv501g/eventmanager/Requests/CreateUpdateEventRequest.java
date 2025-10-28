@@ -9,6 +9,9 @@ import lombok.Setter;
 
 import java.time.LocalDateTime;
 
+/**
+ * Request object for creating and updating Events.
+ */
 @Getter
 @Setter
 @NoArgsConstructor
