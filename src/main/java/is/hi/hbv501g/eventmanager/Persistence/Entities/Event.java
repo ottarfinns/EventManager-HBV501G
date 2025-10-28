@@ -34,6 +34,11 @@ public class Event {
     private Organizer organizer;
     private boolean isActive;
 
+    @OneToOne(mappedBy = "event", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JsonIgnore
+    private Image image;
+
+
 
 
     public Event(
