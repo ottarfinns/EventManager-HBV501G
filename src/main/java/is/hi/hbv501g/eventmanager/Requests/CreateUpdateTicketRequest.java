@@ -6,6 +6,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+/**
+ * Request object for creating and updating Tickets.
+ */
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter @Setter

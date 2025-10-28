@@ -10,7 +10,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
-
+/**
+ * Spring REST API Controller, handles authentication and login.
+ */
 @RestController
 @RequestMapping("/auth")
 public class LoginController {
@@ -24,6 +26,11 @@ public class LoginController {
         this.loginService = loginService;
     }
 
+    /**
+     * Login endpoint for attendee accounts
+     * @param request The LoginRequest containing username and password.
+     * @return A newly issued authToken.
+     */
     @PostMapping("/attendee/login")
     public String attendeeLogin(@RequestBody LoginRequest request) {
         if (request == null || request.getUsername() == null || request.getUsername().isBlank()
@@ -39,6 +46,11 @@ public class LoginController {
         return jwtService.generateToken(userId, "ATTENDEE");
     }
 
+    /**
+     * Login endpoint for organizer accounts
+     * @param request The LoginRequest containing username and password.
+     * @return A newly issued authToken.
+     */
     @PostMapping("/organizer/login")
     public String organizerLogin(@RequestBody LoginRequest request) {
         if (request == null || request.getUsername() == null || request.getUsername().isBlank()

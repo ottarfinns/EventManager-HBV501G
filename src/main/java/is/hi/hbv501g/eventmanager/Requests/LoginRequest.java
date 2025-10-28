@@ -5,6 +5,9 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
+/**
+ * Request object for logging in.
+ */
 @Data
 @ToString(exclude = "password")
 @NoArgsConstructor

@@ -7,6 +7,9 @@ import lombok.*;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
+/**
+ * Request object for filtering events.
+ */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor

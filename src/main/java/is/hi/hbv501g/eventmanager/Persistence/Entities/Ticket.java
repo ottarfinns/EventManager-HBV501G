@@ -6,6 +6,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+/**
+ * Entity for Tickets, associations between Events and Attendees.
+ */
 @Entity
 @Getter
 @Setter

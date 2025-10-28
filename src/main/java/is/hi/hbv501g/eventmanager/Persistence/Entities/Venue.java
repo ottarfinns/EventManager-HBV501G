@@ -6,6 +6,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+/**
+ * Venue of an event. Embedded into the Event table.
+ */
 @Getter @Setter
 @AllArgsConstructor
 @NoArgsConstructor
