@@ -47,7 +47,6 @@ public class ImageServiceImpl implements ImageService {
 
         boolean replaced = false;
         if (event.getImage() != null) {
-            System.out.println("Image already exists");
             imageRepository.delete(event.getImage());
             event.setImage(null);
             imageRepository.flush();
