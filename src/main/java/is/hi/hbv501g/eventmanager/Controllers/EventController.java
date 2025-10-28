@@ -52,17 +52,34 @@ public class EventController {
         return service.createEvent(userId, request);
     }
 
+    /**
+     * Image upload endpoint.
+     *
+     * @param file    The image file to be uploaded.
+     * @param eventId The Id of the event the image is associated with.
+     * @param userId  The Id of the organizer attempting the upload.
+     * @return A ResponseEntity containing a success message if the image was
+     * succesfully uploaded or an appropriate error message if the
+     * upload fails.
+     * @throws IOException if an I/O error occurs while reading the image bytes.
+     */
     @PostMapping("/events/{eventId}/image")
     @PreAuthorize("hasRole('ORGANIZER')")
     public ResponseEntity<String> uploadImage(@RequestParam("image") MultipartFile file, @PathVariable int eventId, @AuthenticationPrincipal Integer userId) throws IOException {
-        // TODO: Check if organizer is the same as the one that created the event
         return imageService.uploadImage(file, eventId, userId);
-
     }
 
-    @GetMapping("/events/{id}/image")
-    public ResponseEntity<byte[]> getImage(@PathVariable int id) throws IOException {
-        return imageService.findById(id);
+    /**
+     * Get image endpoint.
+     *
+     * @param eventId The id of the event the image is associated with.
+     * @return A ResponseEntity containing a success message if the image was
+     *         found or an appropriate error message if it was not found.
+     * @throws IOException if an I/O error occurs while reading the image bytes.
+     */
+    @GetMapping("/events/{eventId}/image")
+    public ResponseEntity<byte[]> getImage(@PathVariable int eventId) throws IOException {
+        return imageService.findByEventId(eventId);
     }
 
     @GetMapping("/test-auth")

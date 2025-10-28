@@ -4,6 +4,9 @@ package is.hi.hbv501g.eventmanager.Persistence.Entities;
 import jakarta.persistence.*;
 import lombok.*;
 
+/**
+ * Entity for images.
+ */
 @Entity
 @Table(name = "images")
 @Getter

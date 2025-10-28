@@ -31,16 +31,16 @@ public class ImageServiceImpl implements ImageService {
     }
 
 
-    public ResponseEntity<byte[]> findById(int id) {
-        final Optional<Image> image = imageRepository.findByEventId(id);
+    public ResponseEntity<byte[]> findByEventId(int eventId) throws IOException {
+        final Optional<Image> image = imageRepository.findByEventId(eventId);
 
         return ResponseEntity.ok().contentType(MediaType.valueOf(image.orElseThrow().getType()))
                 .body(ImageUtility.decompressImage(image.get().getPicByte()));
     }
 
     @Transactional
-    public ResponseEntity<String> uploadImage(MultipartFile file, int id, int userId) throws IOException {
-        Event event = eventRepository.findById(id).orElseThrow();
+    public ResponseEntity<String> uploadImage(MultipartFile file, int eventId, int userId) throws IOException {
+        Event event = eventRepository.findById(eventId).orElseThrow();
         if (event.getOrganizer().getId() != userId) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body("You do not have permission to perform this operation");
         }

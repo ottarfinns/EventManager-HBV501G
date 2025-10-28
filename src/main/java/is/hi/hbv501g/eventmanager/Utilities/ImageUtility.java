@@ -5,6 +5,12 @@ import java.util.zip.Deflater;
 import java.util.zip.Inflater;
 
 public class ImageUtility {
+    /**
+     * Compresses a raw image using a Deflater.
+     *
+     * @param data The uncompressed image data as a byte array.
+     * @return A compressed byte array of the image data.
+     */
     public static byte[] compressImage(byte[] data) {
         Deflater deflater = new Deflater();
         deflater.setLevel(Deflater.BEST_COMPRESSION);
@@ -24,6 +30,12 @@ public class ImageUtility {
         return outputStream.toByteArray();
     }
 
+    /**
+     * Decompresses a previously compressed image using an Inflater.
+     *
+     * @param data The compressed image data as a byte array.
+     * @return The decompressed image data as a byte array.
+     */
     public static byte[] decompressImage(byte[] data) {
         Inflater inflater = new Inflater();
         inflater.setInput(data);
