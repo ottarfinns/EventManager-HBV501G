@@ -25,8 +25,7 @@ public class CreateUpdateUserRequest {
     /**
      * If true, an organizer account will be created.
      * If false, an attendee account will be created.
-     * Only used for creating accounts,
-     * if this field is nonnull for updateAccount it is ignored.
+     * Used in conjunction with id to identify account in case of updating.
      */
     private Boolean isOrganizer;
 
