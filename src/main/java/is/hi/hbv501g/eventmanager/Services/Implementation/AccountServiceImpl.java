@@ -32,88 +32,91 @@ public class AccountServiceImpl implements AccountService {
         attendeeRepository = aRepo; organizerRepository = oRepo;
     }
 
-    /*
-     * Takes in a request param of type CreateUpdateUserRequest
-     * Returns the id of the successfully created user account
-     */
-    public Integer createAccount(CreateUpdateUserRequest request){
+    public User createAccount(CreateUpdateUserRequest request){
         // Validate request - check nulls, validate parameters
         if (request == null
-                || request.username == null
-                || request.name == null
-                || request.password == null
-                || request.email == null
-                || request.isOrganizer == null) {
+                || request.getUsername() == null
+                || request.getName() == null
+                || request.getPassword() == null
+                || request.getEmail() == null
+                || request.getIsOrganizer() == null) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Missing required fields");
         }
-        if (!Pattern.matches(emailRegex, request.email)) {
+        if (!Pattern.matches(emailRegex, request.getEmail())) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid email");
         }
-        if (request.password.length() < 4) {
+        if (request.getPassword().length() < 4) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Password must be at least 4 characters");
         }
 
         User s;
-        if (request.isOrganizer) {
+        if (request.getIsOrganizer()) {
             // Organizer
 
-            if( organizerRepository.findByUsername(request.username).isPresent() // check if usename taken
-                    || attendeeRepository.findByUsername(request.username).isPresent()
-                    || organizerRepository.findByEmail(request.email).isPresent() // check if email used
+            if( organizerRepository.findByUsername(request.getUsername()).isPresent() // check if usename taken
+                    || attendeeRepository.findByUsername(request.getUsername()).isPresent()
+                    || organizerRepository.findByEmail(request.getEmail()).isPresent() // check if email used
             ) {
                 throw new ResponseStatusException(HttpStatus.CONFLICT, "Username already taken");
             }
             // Map
-            Organizer o = Mapper.MapCreateOrganizer(request);
+            Organizer o = Mapper.MapOrganizer(request);
             // Password hashing
-            o.setPassword(encoder.encode(request.password));
+            o.setPassword(encoder.encode(request.getPassword()));
             // call repository.save
             s = organizerRepository.save(o);
 
         } else {
             // Attendee
 
-            if( attendeeRepository.findByUsername(request.username).isPresent() // check if username taken
-                    || attendeeRepository.findByEmail(request.email).isPresent() // check if email taken
-                    || organizerRepository.findByUsername(request.username).isPresent()
+            if( attendeeRepository.findByUsername(request.getUsername()).isPresent() // check if username taken
+                    || attendeeRepository.findByEmail(request.getEmail()).isPresent() // check if email taken
+                    || organizerRepository.findByUsername(request.getUsername()).isPresent()
             ) {
                 throw new ResponseStatusException(HttpStatus.CONFLICT, "Username already taken");
             }
 
             // Map
-            Attendee a = Mapper.MapCreateAttendee(request);
+            Attendee a = Mapper.MapAttendee(request);
             // Password hashing
-            a.setPassword(encoder.encode(request.password));
+            a.setPassword(encoder.encode(request.getPassword()));
             // call repository.save
             s = attendeeRepository.save(a);
 
         }
 
         // return userid
-        return s.getId();
+        return s;
     }
 
-    public Integer updateAccount(CreateUpdateUserRequest request){
+    /** Not Implemented **/
+    public User updateAccount(CreateUpdateUserRequest request){
         // Follow the same pattern as createAccount.
         // When validating, nulls are ok as that means we just don´t update those parameters.
         // Assume id is set, use that to look up the user. Don´t let users update isOrganizer.
-        return 0;
+        throw new ResponseStatusException(HttpStatus.NOT_IMPLEMENTED);
 
     }
 
-    public User getAccountById(Integer userId) {
-        var optionalAttendee = attendeeRepository.findById(userId);
-        var optionalOrganizer = organizerRepository.findById(userId);
-        if (optionalAttendee.isPresent()) {
-            return optionalAttendee.get();
-        }
-        else if (optionalOrganizer.isPresent()) {
+    public Organizer getOrganizerById(Integer organizerId) {
+        var optionalOrganizer = organizerRepository.findById(organizerId);if (optionalOrganizer.isPresent()) {
             return optionalOrganizer.get();
         }
         else {
             throw new ResponseStatusException(
                     HttpStatus.NOT_FOUND,
-                    "User with ID " + userId + " not found"
+                    "User with ID " + organizerId + " not found"
+            );
+        }
+    }
+    public Attendee getAttendeeById(Integer attendeeId) {
+        var optionalAttendee = attendeeRepository.findById(attendeeId);if (optionalAttendee.isPresent()) {
+            return optionalAttendee.get();
+        }
+        else {
+            throw new ResponseStatusException(
+                    HttpStatus.NOT_FOUND,
+                    "User with ID " + attendeeId + " not found"
             );
         }
     }

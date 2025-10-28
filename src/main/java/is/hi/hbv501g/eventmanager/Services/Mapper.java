@@ -7,45 +7,45 @@ import is.hi.hbv501g.eventmanager.Requests.CreateUpdateUserRequest;
 
 /* Provides mapping from request objects to Entity objects with static methods */
 public class Mapper {
-    public static Attendee MapCreateAttendee(CreateUpdateUserRequest request) {
+    public static Attendee MapAttendee(CreateUpdateUserRequest request) {
         return new Attendee(
-                request.username,
-                request.name,
-                request.email,
-                request.phoneNumber,
-                request.password
+                request.getUsername(),
+                request.getName(),
+                request.getEmail(),
+                request.getPhoneNumber(),
+                request.getPassword()
             );
     }
 
-    public static Organizer MapCreateOrganizer(CreateUpdateUserRequest request) {
+    public static Organizer MapOrganizer(CreateUpdateUserRequest request) {
         return new Organizer(
-                request.username,
-                request.name,
-                request.email,
-                request.phoneNumber,
-                request.password
+                request.getUsername(),
+                request.getName(),
+                request.getEmail(),
+                request.getPhoneNumber(),
+                request.getPassword()
         );
     }
 
-    public static Event MapCreateEvent(CreateUpdateEventRequest request, Organizer organizer) {
+    public static Event Map(CreateUpdateEventRequest request, Organizer organizer) {
         return new Event(
-                request.name,
-                request.type,
-                request.description,
-                request.dateTime,
-                request.maxPeople,
-                request.price,
-                request.venue,
+                request.getName(),
+                request.getType(),
+                request.getDescription(),
+                request.getDateTime(),
+                request.getMaxPeople(),
+                request.getPrice(),
+                request.getVenue(),
                 organizer,
                 true
         );
     }
 
-    public static Ticket MapCreateTicket(CreateUpdateTicketRequest request) {
+    public static Ticket Map(CreateUpdateTicketRequest request, Double eventPrice) {
         return new Ticket(
-                request.attendeeId,
-                request.eventId,
-                request.price,
+                request.getAttendeeId(),
+                request.getEventId(),
+                eventPrice,
                 Ticket.Status.active
         );
     }

@@ -6,21 +6,27 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+/**
+ * Request object for creating and updating Tickets.
+ */
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter @Setter
 public class CreateUpdateTicketRequest {
-    public Integer id;
-    public Integer attendeeId;
-    public Integer eventId;
-    public Double price;
-    public Status status;
+    private Integer id;
+    private Integer attendeeId;
+    private Integer eventId;
+    private Double price;
+    private Status status;
 
 
     //Constructor for Create
-    public CreateUpdateTicketRequest(Integer eventId, Double price) {
-//        this.attendeeId = attendeeId;
+    public CreateUpdateTicketRequest(Integer eventId) {
         this.eventId = eventId;
-        this.price = price;
     }
+
+    public CreateUpdateTicketRequest(Status status) {
+        this.status = status;
+    }
+
 }

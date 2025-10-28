@@ -2,17 +2,19 @@ package is.hi.hbv501g.eventmanager.Requests;
 
 import is.hi.hbv501g.eventmanager.Persistence.Entities.EventType;
 import is.hi.hbv501g.eventmanager.Persistence.Entities.Venue;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
+/**
+ * Request object for filtering events.
+ */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-
+@Getter
+@Setter
 public class EventFilterRequest {
     private String name;
     private EventType type;

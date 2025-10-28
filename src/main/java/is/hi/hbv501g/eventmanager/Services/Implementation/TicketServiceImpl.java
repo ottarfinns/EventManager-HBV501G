@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
+import java.util.Objects;
 
 @Service
 public class TicketServiceImpl implements TicketService {
@@ -32,22 +33,18 @@ public class TicketServiceImpl implements TicketService {
 
     /*
      * Takes in a request param of type CreateUpdateTicketRequest
-     * Returns the id of the successfully created ticket
+     * Returns the successfully created ticket
      */
     public Ticket createTicket(CreateUpdateTicketRequest request) {
 
-        if (request == null || request.attendeeId == null || request.attendeeId == 0 || request.price == null || request.eventId == null || request.eventId == 0) {
+        if (request == null || request.getAttendeeId() == null || request.getAttendeeId() == 0 || request.getEventId() == null || request.getEventId() == 0) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Missing required fields");
-        }
-
-        if (request.price < 0) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Price has to be greater or equal 0");
         }
 
 
         //ensure event has space
-        Event event = eventRepository.findById(request.eventId).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Event not found"));
-        int ticketCount = repository.countByEventId(request.eventId);
+        Event event = eventRepository.findById(request.getEventId()).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Event not found"));
+        int ticketCount = repository.countByEventIdAndStatus(request.getEventId(), Status.active);
         int maxOccupancy = event.getMaxPeople();
         if (ticketCount >= maxOccupancy) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Event is full — cannot create more tickets");
@@ -55,16 +52,17 @@ public class TicketServiceImpl implements TicketService {
 
 
         //return null if user already has a ticket for this event
-        List<Ticket> tickets = getTicketByUserId(request.attendeeId);
+        List<Ticket> tickets = getTicketByUserId(request.getAttendeeId());
         boolean alreadyHasTicket = tickets.stream()
-                .anyMatch(t -> t.getEventId().equals(request.eventId));
+                .anyMatch(t -> t.getEventId().equals(request.getEventId()));
         if (alreadyHasTicket) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "User already has a ticket for this event");
         }
 
+        //create and save ticket to repository
         Ticket s;
-        Ticket t = Mapper.MapCreateTicket(request);
-        //call repository.save
+        Ticket t = Mapper.Map(request, event.getPrice());
+
         s = repository.save(t);
         return s;
     }
@@ -81,14 +79,33 @@ public class TicketServiceImpl implements TicketService {
         return repository.findByEventId(eventId);
     }
 
-    public boolean cancelTicket(Integer ticketId) {
+    public Ticket cancelTicket(Integer userId, Integer ticketId, CreateUpdateTicketRequest request) {
+        //get ticket by id
+        if (ticketId==null || ticketId==0){
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Missing ticket ID");
+        }
         Ticket t = getTicketById(ticketId);
         if (t == null) {
-            return false;
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Ticket with ID " + request.getEventId() + " not found");
         }
+
+        //check whether user calling function owns this ticket
+        if (!Objects.equals(t.getAttendeeId(), userId)){
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Users can only cancel their own tickets");
+        }
+
+        //check status, can only cancel active ticket
+        if (t.getStatus()==Status.cancelled) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Ticket is cancelled already");
+        } else if (t.getStatus()==Status.checked_in) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Can't cancel used ticket");
+        } else if (t.getStatus()==Status.expired) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Can't cancel expired ticket");
+        }
+
         t.setStatus(Status.cancelled);
         repository.save(t);
-        return true;
+        return t;
     }
 
     public boolean cancelAllUser(Integer attendeeId) {

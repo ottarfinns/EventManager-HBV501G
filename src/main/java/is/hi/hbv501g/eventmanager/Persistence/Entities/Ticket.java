@@ -6,9 +6,11 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+/**
+ * Entity for Tickets, associations between Events and Attendees.
+ */
 @Entity
 @Getter
-//@Table(name="tickets")
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
@@ -34,7 +36,6 @@ public class Ticket {
     public enum Status {
         active,
         cancelled,
-        refunded,
         checked_in,
         expired
     }

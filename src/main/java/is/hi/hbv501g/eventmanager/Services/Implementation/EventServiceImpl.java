@@ -1,7 +1,6 @@
 package is.hi.hbv501g.eventmanager.Services.Implementation;
 
 import is.hi.hbv501g.eventmanager.Persistence.Entities.Event;
-import is.hi.hbv501g.eventmanager.Persistence.Entities.Organizer;
 import is.hi.hbv501g.eventmanager.Persistence.Repositories.EventRepository;
 import is.hi.hbv501g.eventmanager.Requests.CreateUpdateEventRequest;
 import is.hi.hbv501g.eventmanager.Requests.EventFilterRequest;
@@ -32,32 +31,30 @@ public class EventServiceImpl implements EventService {
         this.accountService = accountService;
     }
 
-    /**
-     * Takes in a request param of type CreateUpdateEventRequest, validates and saves, returns created Event
-     */
     public Event createEvent(Integer organizerId, CreateUpdateEventRequest request) {
         //Validate request
         if (request == null
-                || request.name == null
-                || request.name.isEmpty()
-                || request.price == null
-                || request.maxPeople == null
+                || request.getName() == null
+                || request.getName().isEmpty()
+                || request.getPrice() == null
+                || request.getMaxPeople() == null
         ) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Missing required fields");
         }
 
-        var user = accountService.getAccountById(organizerId);
-        if (!(user instanceof Organizer o)) {
+        try {
+            // throws if not found
+            var organizer = accountService.getOrganizerById(organizerId);Event s;
+
+            Event e = Mapper.Map(request, organizer);
+            s = eventRepository.save(e);
+            return s;
+        }
+        catch(Exception e) {
             throw new ResponseStatusException(
                     HttpStatus.FORBIDDEN, "User is not an organizer"
             );
         }
-
-        Event s;
-        Event e = Mapper.MapCreateEvent(request, o);
-        // call repository.save
-        s = eventRepository.save(e);
-        return s;
     }
 
     @Override
@@ -72,7 +69,8 @@ public class EventServiceImpl implements EventService {
                     .and(hasMaxOccupancy(request.getMaxOccupancy()))
                     .and(priceGreaterThan(request.getMinPrice()))
                     .and(priceLesserThan(request.getMaxPrice()))
-                    .and(hasOrganizerId(request.getOrganizerId()));
+                    .and(hasOrganizerId(request.getOrganizerId()))
+                    .and(onlyActive(getActiveOnly));
             var venue = request.getVenue();
             if (venue != null) {
                 spec = spec.and(hasVenueAddress(venue.getAddress()))
@@ -96,14 +94,14 @@ public class EventServiceImpl implements EventService {
             // check organizer id is the same
             if (!Objects.equals(e.getOrganizer().getId(), organizerId)) throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Organizer does not own this event");
             else  {
-                if (request.name != null) e.setName(request.name);
-                if (request.type != null) e.setType(request.type);
-                if (request.description != null) e.setDescription(request.description);
-                if (request.dateTime != null) e.setDateTime(request.dateTime);
-                if (request.maxPeople != null) e.setMaxPeople(request.maxPeople);
-                if (request.price != null) e.setPrice(request.price);
-                if (request.venue != null) {
-                    var v = request.venue;
+                if (request.getName() != null) e.setName(request.getName());
+                if (request.getType() != null) e.setType(request.getType());
+                if (request.getDescription() != null) e.setDescription(request.getDescription());
+                if (request.getDateTime() != null) e.setDateTime(request.getDateTime());
+                if (request.getMaxPeople() != null) e.setMaxPeople(request.getMaxPeople());
+                if (request.getPrice() != null) e.setPrice(request.getPrice());
+                if (request.getVenue() != null) {
+                    var v = request.getVenue();
                     if (v.getAddress() != null) e.getVenue().setAddress(v.getAddress());
                     if (v.getPostCode() != null) e.getVenue().setPostCode(v.getPostCode());
                     if (v.getVenueName() != null) e.getVenue().setVenueName(v.getVenueName());
