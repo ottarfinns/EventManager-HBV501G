@@ -4,14 +4,18 @@ import is.hi.hbv501g.eventmanager.Persistence.Entities.Event;
 import is.hi.hbv501g.eventmanager.Requests.CreateUpdateEventRequest;
 import is.hi.hbv501g.eventmanager.Requests.EventFilterRequest;
 import is.hi.hbv501g.eventmanager.Services.EventService;
+import is.hi.hbv501g.eventmanager.Services.ImageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -19,9 +23,12 @@ import java.util.List;
 public class EventController {
     @Autowired
     private final EventService service;
+    @Autowired
+    private final ImageService imageService;
 
-    public EventController(EventService service) {
+    public EventController(EventService service, ImageService imageService) {
         this.service = service;
+        this.imageService = imageService;
     }
 
     @GetMapping("/events")
@@ -43,6 +50,12 @@ public class EventController {
     @PreAuthorize("hasRole('ORGANIZER')")
     public Event createEvent(@RequestBody CreateUpdateEventRequest request, @AuthenticationPrincipal Integer userId) {
         return service.createEvent(userId, request);
+    }
+
+    @PostMapping("/events/{eventId}/image")
+    public ResponseEntity<String> uploadImage(@RequestParam("image") MultipartFile file, @PathVariable int eventId) throws IOException {
+        return imageService.uploadImage(file, eventId);
+
     }
 
     @GetMapping("/test-auth")
