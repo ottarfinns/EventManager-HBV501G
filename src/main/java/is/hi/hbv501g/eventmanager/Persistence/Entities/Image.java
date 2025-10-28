@@ -20,8 +20,8 @@ public class Image {
 
     private String type;
 
-    @Lob
-    @Column(name = "picByte", length = 5000)
+    //@Lob
+    @Column(name = "picByte", columnDefinition = "bytea")
     private byte[] picByte;
 
     @OneToOne

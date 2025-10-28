@@ -53,10 +53,13 @@ public class EventController {
     }
 
     @PostMapping("/events/{eventId}/image")
-    public ResponseEntity<String> uploadImage(@RequestParam("image") MultipartFile file, @PathVariable int eventId) throws IOException {
-        return imageService.uploadImage(file, eventId);
+    @PreAuthorize("hasRole('ORGANIZER')")
+    public ResponseEntity<String> uploadImage(@RequestParam("image") MultipartFile file, @PathVariable int eventId, @AuthenticationPrincipal Integer userId) throws IOException {
+        // TODO: Check if organizer is the same as the one that created the event
+        return imageService.uploadImage(file, eventId, userId);
 
     }
+
     @GetMapping("/events/{id}/image")
     public ResponseEntity<byte[]> getImage(@PathVariable int id) throws IOException {
         return imageService.findById(id);

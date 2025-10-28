@@ -6,7 +6,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 
 public interface ImageService {
-    ResponseEntity<String> uploadImage(MultipartFile file, int id) throws IOException;
+    ResponseEntity<String> uploadImage(MultipartFile file, int id, int userId) throws IOException;
 
     ResponseEntity<byte[]> findById(int id);
 }

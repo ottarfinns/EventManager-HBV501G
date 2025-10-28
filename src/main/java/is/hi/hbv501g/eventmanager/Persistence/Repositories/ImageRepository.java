@@ -7,4 +7,5 @@ import java.util.Optional;
 
 public interface ImageRepository extends JpaRepository<Image, Integer> {
     Optional<Image> findById(int id);
+    Optional<Image> findByEventId(int id);
 }
