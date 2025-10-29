@@ -89,12 +89,63 @@ public class AccountServiceImpl implements AccountService {
         return s;
     }
 
-    /** Not Implemented **/
     public User updateAccount(CreateUpdateUserRequest request){
-        // Follow the same pattern as createAccount.
-        // When validating, nulls are ok as that means we just don´t update those parameters.
-        // Assume id is set, use that to look up the user. Don´t let users update isOrganizer.
-        throw new ResponseStatusException(HttpStatus.NOT_IMPLEMENTED);
+        // Validate request
+        // if nothing is to be updated, throw
+        if (request.getName() == null
+                && request.getPassword() == null
+                && request.getEmail() == null
+                && request.getUsername() == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Missing fields");
+        }
+
+        if ( request.getEmail() != null && !Pattern.matches(emailRegex, request.getEmail())) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid email");
+        }
+        if ( request.getPassword() != null && request.getPassword().length() < 4) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Password must be at least 4 characters");
+        }
+        if (request.getUsername() != null && (
+                attendeeRepository.findByUsername(request.getUsername()).isPresent()
+                || organizerRepository.findByUsername(request.getUsername()).isPresent()
+                )){
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Username taken");
+        }
+
+        // update nonnull parameters and save to repository
+        if (request.getIsOrganizer()) {
+            // Organizer
+
+            if (organizerRepository.findByEmail(request.getEmail()).isPresent()) {
+                throw new ResponseStatusException(HttpStatus.CONFLICT, "Email taken");
+            }
+
+            Organizer s = organizerRepository.findById(request.getId()).orElseThrow();
+            if (request.getUsername() != null) s.setUsername(request.getUsername());
+            if (request.getName() != null) s.setName(request.getName());
+            if (request.getEmail() != null) s.setEmail(request.getEmail());
+            if (request.getPhoneNumber() != null) s.setPhoneNumber(request.getPhoneNumber());
+            if (request.getPassword() != null) s.setPassword(encoder.encode(request.getPassword()));
+
+            organizerRepository.save(s);
+            return s;
+        }
+        else {
+            // Attendee
+
+            if (attendeeRepository.findByEmail(request.getEmail()).isPresent()) {
+                throw new ResponseStatusException(HttpStatus.CONFLICT, "Email taken");
+            }
+
+            Attendee s = attendeeRepository.findById(request.getId()).orElseThrow();
+            if (request.getUsername() != null) s.setUsername(request.getUsername());
+            if (request.getName() != null) s.setName(request.getName());
+            if (request.getEmail() != null) s.setEmail(request.getEmail());
+            if (request.getPhoneNumber() != null) s.setPhoneNumber(request.getPhoneNumber());
+            if (request.getPassword() != null) s.setPassword(encoder.encode(request.getPassword()));
+            attendeeRepository.save(s);
+            return s;
+        }
 
     }
 
