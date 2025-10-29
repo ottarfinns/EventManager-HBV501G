@@ -126,6 +126,10 @@ public class EventServiceImpl implements EventService {
         if (optionalEvent.isEmpty()) throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Event with id " + eventId + " not found");
         Event e = optionalEvent.get();
 
+        //checks that organizer is owner
+        if (!Objects.equals(e.getOrganizer().getId(), organizerId)) throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Organizer does not own this event");
+
+
         //cancel the event if it's active
         if (e.isActive()) {
             ticketService.cancelAllEvent(eventId);
