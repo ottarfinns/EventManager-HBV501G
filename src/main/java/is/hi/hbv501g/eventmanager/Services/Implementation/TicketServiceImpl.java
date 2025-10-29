@@ -51,7 +51,7 @@ public class TicketServiceImpl implements TicketService {
         }
 
 
-        //return null if user already has an active ticket for this event
+        //throw if user already has an active ticket for this event
         List<Ticket> tickets = getTicketByUserId(request.getAttendeeId());
         boolean alreadyHasTicket = tickets.stream()
                 .anyMatch(t ->
