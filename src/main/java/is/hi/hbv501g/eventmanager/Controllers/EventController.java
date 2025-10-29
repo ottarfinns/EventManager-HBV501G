@@ -75,6 +75,9 @@ public class EventController {
     @PutMapping("/events/{eventId}")
     @PreAuthorize("hasRole('ORGANIZER')")
     public Event updateEvents(@PathVariable Integer eventId, @RequestBody CreateUpdateEventRequest request, @AuthenticationPrincipal Integer userId) {
+        if (request.isCancel()){
+            return service.cancelEvent(eventId, userId);
+        }
         return service.updateEvent(eventId, userId, request);
     }
 }

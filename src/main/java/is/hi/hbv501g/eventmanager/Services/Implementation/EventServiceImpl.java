@@ -7,7 +7,7 @@ import is.hi.hbv501g.eventmanager.Requests.EventFilterRequest;
 import is.hi.hbv501g.eventmanager.Services.AccountService;
 import is.hi.hbv501g.eventmanager.Services.EventService;
 import is.hi.hbv501g.eventmanager.Services.Mapper;
-import org.springframework.beans.factory.annotation.Autowired;
+import is.hi.hbv501g.eventmanager.Services.TicketService;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -20,15 +20,15 @@ import static is.hi.hbv501g.eventmanager.Persistence.Repositories.EventSpecs.*;
 
 @Service
 public class EventServiceImpl implements EventService {
-    @Autowired
     private final EventRepository eventRepository;
-    @Autowired
     private final AccountService accountService;
+    private final TicketService ticketService;
 
-    public EventServiceImpl(EventRepository repo, AccountService accountService)
+    public EventServiceImpl(EventRepository repo, AccountService accountService, TicketService ticketService)
     {
         eventRepository = repo;
         this.accountService = accountService;
+        this.ticketService = ticketService;
     }
 
     public Event createEvent(Integer organizerId, CreateUpdateEventRequest request) {
@@ -115,5 +115,25 @@ public class EventServiceImpl implements EventService {
 
     public Event getEventById(int id) {
         return eventRepository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Event with ID " + id + " not found"));
+    }
+
+    public Event cancelEvent(Integer eventId, Integer organizerId) {
+        if (eventId == null) throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Missing event id");
+        if (organizerId == null) throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Missing organizer id");
+
+        //get the event
+        Optional<Event> optionalEvent = eventRepository.findById(eventId);
+        if (optionalEvent.isEmpty()) throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Event with id " + eventId + " not found");
+        Event e = optionalEvent.get();
+
+        //cancel the event if it's active
+        if (e.isActive()) {
+            ticketService.cancelAllEvent(eventId);
+            e.setActive(false);
+            eventRepository.save(e);
+        } else{
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Event is already cancelled");
+        }
+        return e;
     }
 }
