@@ -38,10 +38,17 @@ public interface EventService {
      Event getEventById(int id);
 
      /**
-      * Updates an Event, validates and saves.
-      * @param organizerId The id of the organizer updating the event.
+      * Cancels an Event and all associated tickets
+      * @param organizerId The id of the organizer cancelling the event.
       *                    Validated to ensure that it is the organizer who created the event.
       * @return The cancelled event.
       */
      Event cancelEvent(Integer eventId, Integer organizerId);
+
+     /**
+      * Deletes an Event and cancels associated tickets
+      * @param organizerId The id of the organizer deleting the event.
+      *                    Validated to ensure that it is the organizer who created the event.
+      */
+     void deleteEvent(Integer eventId, Integer organizerId);
 }

@@ -140,4 +140,26 @@ public class EventServiceImpl implements EventService {
         }
         return e;
     }
+
+
+    public void deleteEvent(Integer eventId, Integer organizerId) {
+        if (eventId == null) throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Missing event id");
+        if (organizerId == null) throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Missing organizer id");
+
+        //find event
+        Optional<Event> optionalEvent = eventRepository.findById(eventId);
+        if (optionalEvent.isEmpty()) throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Event with id " + eventId + " not found");
+        Event e = optionalEvent.get();
+
+        //checks that organizer is owner
+        if (!Objects.equals(e.getOrganizer().getId(), organizerId)) throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Organizer does not own this event");
+
+        //cancel all tickets for event
+        if (e.isActive()) {
+           ticketService.cancelAllEvent(eventId);
+        }
+
+        eventRepository.delete(e);
+
+    }
 }
