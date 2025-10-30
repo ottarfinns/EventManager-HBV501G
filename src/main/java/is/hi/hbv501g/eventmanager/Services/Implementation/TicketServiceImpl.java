@@ -41,9 +41,13 @@ public class TicketServiceImpl implements TicketService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Missing required fields");
         }
 
+        //double check event is still active
+        Event event = eventRepository.findById(request.getEventId()).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Event not found"));
+        if (!event.isActive()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Event is not active");
+        }
 
         //ensure event has space
-        Event event = eventRepository.findById(request.getEventId()).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Event not found"));
         int ticketCount = repository.countByEventIdAndStatus(request.getEventId(), Status.active);
         int maxOccupancy = event.getMaxPeople();
         if (ticketCount >= maxOccupancy) {
