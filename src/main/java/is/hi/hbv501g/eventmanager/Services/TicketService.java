@@ -31,9 +31,8 @@ public interface TicketService {
 
       * Cancel all tickets to an event
       * @param eventId The id of the event.
-      * @return success
       */
-     boolean cancelAllEvent(Integer eventId);
+     void cancelAllEvent(Integer eventId);
 
      /**
       * Gets all tickets belonging to a user.
@@ -48,4 +47,11 @@ public interface TicketService {
       * @return The Ticket.
       */
      Ticket getTicketById(Integer ticketId);
+
+     /**
+      * Gets all tickets for event by event id.
+      * @param eventId The ticket id.
+      * @return A list of tickets
+      */
+     List<Ticket> getTicketByEventId(Integer eventId);
 }

@@ -36,4 +36,19 @@ public interface EventService {
       * Get an Event by its id.
       */
      Event getEventById(int id);
+
+     /**
+      * Cancels an Event and all associated tickets
+      * @param organizerId The id of the organizer cancelling the event.
+      *                    Validated to ensure that it is the organizer who created the event.
+      * @return The cancelled event.
+      */
+     Event cancelEvent(Integer eventId, Integer organizerId);
+
+     /**
+      * Deletes an Event and cancels associated tickets
+      * @param organizerId The id of the organizer deleting the event.
+      *                    Validated to ensure that it is the organizer who created the event.
+      */
+     void deleteEvent(Integer eventId, Integer organizerId);
 }

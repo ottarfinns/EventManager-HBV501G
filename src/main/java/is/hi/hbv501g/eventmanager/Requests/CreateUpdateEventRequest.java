@@ -24,4 +24,5 @@ public class CreateUpdateEventRequest {
     private Integer maxPeople;
     private Double price;
     private Venue venue;
+    private boolean cancel;
 }

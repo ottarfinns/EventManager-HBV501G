@@ -75,6 +75,21 @@ public class EventController {
     @PutMapping("/events/{eventId}")
     @PreAuthorize("hasRole('ORGANIZER')")
     public Event updateEvents(@PathVariable Integer eventId, @RequestBody CreateUpdateEventRequest request, @AuthenticationPrincipal Integer userId) {
+        if (request.isCancel()){
+            return service.cancelEvent(eventId, userId);
+        }
         return service.updateEvent(eventId, userId, request);
+    }
+
+    /**
+     * Delete event endpoint.
+     * User must be authenticated as an organizer.
+     * @param eventId The id of the event to be deleted.
+     * @param userId The currently authenticated user's id, from request header.
+     */
+    @DeleteMapping("/events/{eventId}")
+    @PreAuthorize("hasRole('ORGANIZER')")
+    public void deleteEvent(@PathVariable Integer eventId, @AuthenticationPrincipal Integer userId) {
+        service.deleteEvent(eventId, userId);
     }
 }

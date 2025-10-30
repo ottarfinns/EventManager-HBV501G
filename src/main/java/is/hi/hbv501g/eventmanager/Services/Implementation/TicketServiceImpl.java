@@ -51,10 +51,11 @@ public class TicketServiceImpl implements TicketService {
         }
 
 
-        //return null if user already has a ticket for this event
+        //throw if user already has an active ticket for this event
         List<Ticket> tickets = getTicketByUserId(request.getAttendeeId());
         boolean alreadyHasTicket = tickets.stream()
-                .anyMatch(t -> t.getEventId().equals(request.getEventId()));
+                .anyMatch(t ->
+                        t.getEventId().equals(request.getEventId()) && t.getStatus() == Status.active);
         if (alreadyHasTicket) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "User already has a ticket for this event");
         }
@@ -125,19 +126,20 @@ public class TicketServiceImpl implements TicketService {
         return true;
     }
 
-    public boolean cancelAllEvent(Integer eventId) {
+    public void cancelAllEvent(Integer eventId) {
         if (eventId == null) {
-            return false;
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Missing event id");
         }
         List<Ticket> tickets = getTicketByEventId(eventId);
         if (tickets == null) {
-            return false;
+            return; //no tickets for event
         }
         for (Ticket t : tickets) {
-            t.setStatus(Status.cancelled);
+            if (t.getStatus()==Status.active) {
+                t.setStatus(Status.cancelled);
+            }
         }
         repository.saveAll(tickets);
-        return true;
 
     }
 
