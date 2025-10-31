@@ -87,6 +87,23 @@ public class AccountController {
 
     }
 
+    @GetMapping("/accounts/attendee/{userId}")
+    @PreAuthorize("hasRole('ATTENDEE')")
+    public void deleteAttendee(@PathVariable Integer pathId, @AuthenticationPrincipal Integer authId) {
+        if (!Objects.equals(pathId, authId)) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Not authenticated as this user");
+        }
+        service.deleteAttendee(authId);
+    }
+
+    @DeleteMapping("/accounts/organizer/{userId}")
+    @PreAuthorize("hasRole('ORGANIZER')")
+    public void deleteOrganizer(@PathVariable Integer pathId, @AuthenticationPrincipal Integer authId) {
+        if (!Objects.equals(pathId, authId)) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Not authenticated as this user");
+        }
+        service.deleteOrganizer(authId);
+    }
     /* Delete Endpoint
     * Takes in the account id
     */
