@@ -25,9 +25,15 @@ public interface AccountService {
     /**Get an Attendee by the id*/
     Attendee getAttendeeById(Integer attendeeId);
 
-    /** Delete attendee account*/
+    /**
+     * Delete attendee account
+     * @param attendeeId The attendee id.
+     */
     void deleteAttendee (Integer attendeeId);
 
-    /** Delete organizer account*/
+    /**
+     * Delete organizer account
+     * @param organizerId The organizer id.
+     */
     void deleteOrganizer (Integer organizerId);
 }
