@@ -20,9 +20,16 @@ public interface AccountService {
      */
     User updateAccount(CreateUpdateUserRequest request);
 
-    /**Get an Organizer by the id*/
+    /**
+     * Get an Organizer by the id
+     * @param organizerId The attendee id.
+     */
     Organizer getOrganizerById(Integer organizerId);
-    /**Get an Attendee by the id*/
+
+    /**
+     * Get an Attendee by the id
+     * @param attendeeId The attendee id.
+     */
     Attendee getAttendeeById(Integer attendeeId);
 
     /**

@@ -87,6 +87,11 @@ public class AccountController {
 
     }
 
+    /**
+     * Deletes Attendee endpoint. Must be authenticated to delete an endpoint.
+     * @param authId The authentication id for the current user.
+     * @param userId The path id.
+     */
     @DeleteMapping("/accounts/attendee/{userId}")
     @PreAuthorize("hasRole('ATTENDEE')")
     public void deleteAttendee(@PathVariable Integer userId, @AuthenticationPrincipal Integer authId) {
@@ -96,6 +101,11 @@ public class AccountController {
         service.deleteAttendee(authId);
     }
 
+    /**
+     * Deletes organizer endpoint. Must be authenticated to delete an endpoint.
+     * @param authId The authentication id for the current user.
+     * @param userId The path id.
+     */
     @DeleteMapping("/accounts/organizer/{userId}")
     @PreAuthorize("hasRole('ORGANIZER')")
     public void deleteOrganizer(@PathVariable Integer userId, @AuthenticationPrincipal Integer authId) {
@@ -105,6 +115,11 @@ public class AccountController {
         service.deleteOrganizer(authId);
     }
 
+    /**
+     * Gets Attendee endpoint.
+     * @param userId The path id.
+     * @return attendee, throws an error if the attendee does not exist.
+     */
     @GetMapping("/accounts/attendee/{userId}")
     public Attendee getAttendeeById(@PathVariable Integer userId) {
         Attendee attendee = service.getAttendeeById(userId);
@@ -114,6 +129,11 @@ public class AccountController {
         return attendee;
     }
 
+    /**
+     * Gets Organizer endpoint.
+     * @param userId The path id.
+     * @return organizer, throws an error if the attendee does not exist.
+     */
     @GetMapping("/accounts/organizer/{userId}")
     public Organizer getOrganizerById(@PathVariable Integer userId) {
         Organizer organizer = service.getOrganizerById(userId);
