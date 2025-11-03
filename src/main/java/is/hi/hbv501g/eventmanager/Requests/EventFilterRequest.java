@@ -1,8 +1,10 @@
 package is.hi.hbv501g.eventmanager.Requests;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import is.hi.hbv501g.eventmanager.Persistence.Entities.EventType;
 import is.hi.hbv501g.eventmanager.Persistence.Entities.Venue;
 import lombok.*;
+import org.springframework.lang.Nullable;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -16,13 +18,15 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 public class EventFilterRequest {
-    private String name;
-    private EventType type;
-    private Venue venue;
-    private LocalDateTime dateFrom;
-    private LocalDateTime dateTo;
-    private Integer maxOccupancy;
-    private BigDecimal maxPrice;
-    private BigDecimal minPrice;
-    private Long organizerId;
+    private @Nullable String name;
+    private @Nullable EventType type;
+    private @Nullable Venue venue;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
+    private @Nullable LocalDateTime dateFrom;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
+    private @Nullable LocalDateTime dateTo;
+    private @Nullable Integer maxOccupancy;
+    private @Nullable BigDecimal maxPrice;
+    private @Nullable BigDecimal minPrice;
+    private @Nullable Long organizerId;
 }
