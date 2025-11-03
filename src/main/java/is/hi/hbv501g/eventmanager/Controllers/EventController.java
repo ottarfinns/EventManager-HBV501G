@@ -37,12 +37,22 @@ public class EventController {
     /**
      * Get Events endpoint.
      *
-     * @param request The EventFilterRequest specifying which fields to filter by.
-     *                If null, getEvents will get all events.
-     * @return A list of all events that fit the filters if there are any.
+     * @return A list of all events.
      */
     @GetMapping("/events")
-    public List<Event> getEvents(@RequestBody(required = false) EventFilterRequest request) {
+    public List<Event> getEvents() {
+        return service.getEvents(null, true);
+    }
+
+    /**
+     * Get Filtered Events endpoint.
+     *
+     * @param request The EventFilterRequest specifying which fields to filter by.
+     *                If null, getEventsFiltered will get all events.
+     * @return A list of all events that fit the filters.
+     */
+    @PostMapping("/events/search")
+    public List<Event> getEventsFiltered(@RequestBody(required = false) EventFilterRequest request) {
         return service.getEvents(request, true);
     }
 
