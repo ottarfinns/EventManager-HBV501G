@@ -32,6 +32,7 @@ public class Event {
     @ManyToOne(fetch = FetchType.LAZY)
     @JsonIgnore
     private Organizer organizer;
+    @JsonIgnore
     private boolean isActive;
 
     @OneToOne(mappedBy = "event", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
