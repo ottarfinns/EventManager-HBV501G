@@ -14,6 +14,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.bind.annotation.GetMapping;
+
+import java.security.Principal;
 import java.util.Objects;
 
 /**
@@ -94,11 +96,12 @@ public class AccountController {
      */
     @DeleteMapping("/accounts/attendee/{userId}")
     @PreAuthorize("hasRole('ATTENDEE')")
-    public void deleteAttendee(@PathVariable Integer userId, @AuthenticationPrincipal Integer authId) {
+    public ResponseEntity<String> deleteAttendee(@PathVariable Integer userId, @AuthenticationPrincipal Integer authId) {
         if (!Objects.equals(userId, authId)) {
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Not authenticated as this user");
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Not authenticated as this user");
         }
         service.deleteAttendee(authId);
+        return ResponseEntity.ok(String.format("Successfully deleted the attendee user with the Id: %s", authId));
     }
 
     /**
@@ -108,11 +111,12 @@ public class AccountController {
      */
     @DeleteMapping("/accounts/organizer/{userId}")
     @PreAuthorize("hasRole('ORGANIZER')")
-    public void deleteOrganizer(@PathVariable Integer userId, @AuthenticationPrincipal Integer authId) {
+    public ResponseEntity<String> deleteOrganizer(@PathVariable Integer userId, @AuthenticationPrincipal Integer authId) {
         if (!Objects.equals(userId, authId)) {
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Not authenticated as this user");
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Not authenticated as this user");
         }
         service.deleteOrganizer(authId);
+        return ResponseEntity.ok(String.format("Successfully deleted the organizer user with the Id: %s", authId));
     }
 
     /**
@@ -121,12 +125,13 @@ public class AccountController {
      * @return attendee, throws an error if the attendee does not exist.
      */
     @GetMapping("/accounts/attendee/{userId}")
-    public Attendee getAttendeeById(@PathVariable Integer userId) {
+    public ResponseEntity<?> getAttendeeById(@PathVariable Integer userId) {
         Attendee attendee = service.getAttendeeById(userId);
         if (attendee == null) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, String.format("Attendee with id %s not found", userId));
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(String.format("Attendee with id %s not found", userId));
         }
-        return attendee;
+        return ResponseEntity.ok(attendee);
     }
 
     /**
@@ -135,12 +140,13 @@ public class AccountController {
      * @return organizer, throws an error if the attendee does not exist.
      */
     @GetMapping("/accounts/organizer/{userId}")
-    public Organizer getOrganizerById(@PathVariable Integer userId) {
+    public ResponseEntity<?> getOrganizerById(@PathVariable Integer userId) {
         Organizer organizer = service.getOrganizerById(userId);
         if (organizer == null) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, String.format("Organizer with id %s not found", userId));
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(String.format("Organizer with id %s not found", userId));
         }
-        return organizer;
+        return ResponseEntity.ok(organizer);
     }
 
     /* Delete Endpoint
