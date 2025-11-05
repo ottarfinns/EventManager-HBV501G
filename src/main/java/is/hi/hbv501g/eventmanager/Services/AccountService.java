@@ -23,12 +23,14 @@ public interface AccountService {
     /**
      * Get an Organizer by the id
      * @param organizerId The attendee id.
+     * @return Organizer if he was found, otherwise null.
      */
     Organizer getOrganizerById(Integer organizerId);
 
     /**
      * Get an Attendee by the id
      * @param attendeeId The attendee id.
+     * @return Attendee if he was found, otherwise null.
      */
     Attendee getAttendeeById(Integer attendeeId);
 

@@ -10,6 +10,7 @@ import is.hi.hbv501g.eventmanager.Services.AccountService;
 import is.hi.hbv501g.eventmanager.Services.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -151,28 +152,25 @@ public class AccountServiceImpl implements AccountService {
 
     }
 
+    /**
+     * Get an Organizer by the id
+     * @param organizerId The attendee id.
+     * @return Organizer if he was found, otherwise null.
+     */
     public Organizer getOrganizerById(Integer organizerId) {
-        var optionalOrganizer = organizerRepository.findById(organizerId);if (optionalOrganizer.isPresent()) {
-            return optionalOrganizer.get();
-        }
-        else {
-            throw new ResponseStatusException(
-                    HttpStatus.NOT_FOUND,
-                    "User with ID " + organizerId + " not found"
-            );
-        }
+        return organizerRepository.findById(organizerId).orElse(null);
     }
+
+    /**
+     * Get an Attendee by the id
+     * @param attendeeId The attendee id.
+     * @return Attendee if he was found, otherwise null.
+     */
     public Attendee getAttendeeById(Integer attendeeId) {
-        var optionalAttendee = attendeeRepository.findById(attendeeId);if (optionalAttendee.isPresent()) {
-            return optionalAttendee.get();
-        }
-        else {
-            throw new ResponseStatusException(
-                    HttpStatus.NOT_FOUND,
-                    "User with ID " + attendeeId + " not found"
-            );
-        }
+        return attendeeRepository.findById(attendeeId).orElse(null);
     }
+
+
     /**
      * Deletes attendee account from the
      * @param attendeeId the id of the attendee
