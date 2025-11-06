@@ -10,11 +10,14 @@ import is.hi.hbv501g.eventmanager.Services.AccountService;
 import is.hi.hbv501g.eventmanager.Services.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.Objects;
+import java.util.Optional;
 import java.util.regex.Pattern;
 
 @Service
@@ -149,26 +152,52 @@ public class AccountServiceImpl implements AccountService {
 
     }
 
+    /**
+     * Get an Organizer by the id
+     * @param organizerId The attendee id.
+     * @return Organizer if he was found, otherwise null.
+     */
     public Organizer getOrganizerById(Integer organizerId) {
-        var optionalOrganizer = organizerRepository.findById(organizerId);if (optionalOrganizer.isPresent()) {
-            return optionalOrganizer.get();
-        }
-        else {
-            throw new ResponseStatusException(
-                    HttpStatus.NOT_FOUND,
-                    "User with ID " + organizerId + " not found"
-            );
-        }
+        return organizerRepository.findById(organizerId).orElse(null);
     }
+
+    /**
+     * Get an Attendee by the id
+     * @param attendeeId The attendee id.
+     * @return Attendee if he was found, otherwise null.
+     */
     public Attendee getAttendeeById(Integer attendeeId) {
-        var optionalAttendee = attendeeRepository.findById(attendeeId);if (optionalAttendee.isPresent()) {
-            return optionalAttendee.get();
-        }
-        else {
-            throw new ResponseStatusException(
-                    HttpStatus.NOT_FOUND,
-                    "User with ID " + attendeeId + " not found"
-            );
-        }
+        return attendeeRepository.findById(attendeeId).orElse(null);
+    }
+
+
+    /**
+     * Deletes attendee account from the
+     * @param attendeeId the id of the attendee
+     * */
+    public void deleteAttendee(Integer attendeeId){
+        if(attendeeId==null) throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Missing attendee id");
+
+        Optional<Attendee> optionalAttendee = attendeeRepository.findById(attendeeId);
+        if (optionalAttendee.isEmpty()) throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Attendee with id " + attendeeId + " not found");
+        Attendee a = optionalAttendee.get();
+
+        attendeeRepository.delete(a);
+    }
+
+    /**
+     * Deletes organizer account
+     * @param organizerId the id of the organizer
+     * */
+    public void deleteOrganizer(Integer organizerId){
+        if(organizerId==null) throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Missing organizer id");
+
+        Optional<Organizer> optionalOrganizer = organizerRepository.findById(organizerId);
+        if (optionalOrganizer.isEmpty()) throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Organizer with id " + organizerId + " not found");
+        Organizer o = optionalOrganizer.get();
+
+        organizerRepository.delete(o);
     }
 }
+
+

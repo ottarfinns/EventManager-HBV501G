@@ -20,8 +20,29 @@ public interface AccountService {
      */
     User updateAccount(CreateUpdateUserRequest request);
 
-    /**Get an Organizer by the id*/
+    /**
+     * Get an Organizer by the id
+     * @param organizerId The attendee id.
+     * @return Organizer if he was found, otherwise null.
+     */
     Organizer getOrganizerById(Integer organizerId);
-    /**Get an Attendee by the id*/
+
+    /**
+     * Get an Attendee by the id
+     * @param attendeeId The attendee id.
+     * @return Attendee if he was found, otherwise null.
+     */
     Attendee getAttendeeById(Integer attendeeId);
+
+    /**
+     * Delete attendee account
+     * @param attendeeId The attendee id.
+     */
+    void deleteAttendee (Integer attendeeId);
+
+    /**
+     * Delete organizer account
+     * @param organizerId The organizer id.
+     */
+    void deleteOrganizer (Integer organizerId);
 }
