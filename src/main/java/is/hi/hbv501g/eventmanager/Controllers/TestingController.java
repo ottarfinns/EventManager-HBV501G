@@ -2,12 +2,10 @@ package is.hi.hbv501g.eventmanager.Controllers;
 
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@Controller
 public class TestingController {
 
     @GetMapping("/test-auth")
