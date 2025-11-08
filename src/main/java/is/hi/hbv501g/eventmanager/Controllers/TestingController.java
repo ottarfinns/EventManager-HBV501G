@@ -26,4 +26,6 @@ public class TestingController {
     public String testAttendeeOnly(@AuthenticationPrincipal Integer userId) {
         return "Success! You are an ATTENDEE with user ID: " + userId;
     }
+
+
 }

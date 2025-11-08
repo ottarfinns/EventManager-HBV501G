@@ -31,7 +31,7 @@ public class EventSpecs {
         return ((root, query, criteriaBuilder) ->
                 address == null ?
                         criteriaBuilder.conjunction() :
-                        criteriaBuilder.equal(root.get("address"), address)
+                        criteriaBuilder.equal(root.get("venue").get("address"), address)
         );
     }
 
@@ -40,7 +40,7 @@ public class EventSpecs {
         return ((root, query, criteriaBuilder) ->
                 postcode == null ?
                         criteriaBuilder.conjunction() :
-                        criteriaBuilder.equal(root.get("post_code"), postcode)
+                        criteriaBuilder.equal(root.get("venue").get("postCode"), postcode)
         );
     }
 
@@ -49,7 +49,7 @@ public class EventSpecs {
         return ((root, query, criteriaBuilder) ->
                 name == null ?
                         criteriaBuilder.conjunction() :
-                        criteriaBuilder.equal(root.get("venue_name"), name)
+                        criteriaBuilder.equal(root.get("venue").get("venueName"), name)
         );
     }
 
@@ -58,7 +58,7 @@ public class EventSpecs {
         return ((root, query, criteriaBuilder) ->
                 dateFrom == null ?
                         criteriaBuilder.conjunction() :
-                        criteriaBuilder.greaterThan(root.get("date_time"), dateFrom.toString())
+                        criteriaBuilder.greaterThanOrEqualTo(root.get("dateTime"), dateFrom)
         );
     }
 
@@ -67,7 +67,7 @@ public class EventSpecs {
         return ((root, query, criteriaBuilder) ->
                 dateTo == null ?
                         criteriaBuilder.conjunction() :
-                        criteriaBuilder.greaterThan(root.get("date_time"), dateTo.toString())
+                        criteriaBuilder.lessThanOrEqualTo(root.get("dateTime"), dateTo)
         );
     }
 
@@ -76,7 +76,7 @@ public class EventSpecs {
         return ((root, query, criteriaBuilder) ->
                 maxOccupancy == null ?
                         criteriaBuilder.conjunction() :
-                        criteriaBuilder.lessThanOrEqualTo(root.get("max_people"), maxOccupancy)
+                        criteriaBuilder.lessThanOrEqualTo(root.get("maxPeople"), maxOccupancy)
         );
     }
 
@@ -103,7 +103,7 @@ public class EventSpecs {
         return ((root, query, criteriaBuilder) ->
                 organizerId == null ?
                         criteriaBuilder.conjunction() :
-                        criteriaBuilder.equal(root.get("organizer_id"), organizerId)
+                        criteriaBuilder.equal(root.get("organizer").get("id"), organizerId)
         );
     }
 
