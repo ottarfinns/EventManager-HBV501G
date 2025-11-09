@@ -6,7 +6,7 @@ import is.hi.hbv501g.eventmanager.Persistence.Entities.Ticket.Status;
 import is.hi.hbv501g.eventmanager.Persistence.Repositories.EventRepository;
 import is.hi.hbv501g.eventmanager.Persistence.Repositories.TicketRepository;
 import is.hi.hbv501g.eventmanager.Requests.CreateUpdateTicketRequest;
-import is.hi.hbv501g.eventmanager.Services.Mapper;
+import is.hi.hbv501g.eventmanager.Utilities.Mapper;
 import is.hi.hbv501g.eventmanager.Services.TicketService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

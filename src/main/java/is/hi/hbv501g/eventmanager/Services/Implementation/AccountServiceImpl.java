@@ -7,16 +7,14 @@ import is.hi.hbv501g.eventmanager.Persistence.Repositories.AttendeeRepository;
 import is.hi.hbv501g.eventmanager.Persistence.Repositories.OrganizerRepository;
 import is.hi.hbv501g.eventmanager.Requests.CreateUpdateUserRequest;
 import is.hi.hbv501g.eventmanager.Services.AccountService;
-import is.hi.hbv501g.eventmanager.Services.Mapper;
+import is.hi.hbv501g.eventmanager.Utilities.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.util.Objects;
 import java.util.Optional;
 import java.util.regex.Pattern;
 

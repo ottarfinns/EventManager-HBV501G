@@ -1,4 +1,4 @@
-package is.hi.hbv501g.eventmanager.Persistence.Entities;
+package is.hi.hbv501g.eventmanager.Utilities;
 
 public enum EventType {
     conference,

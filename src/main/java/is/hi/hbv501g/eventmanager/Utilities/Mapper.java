@@ -1,4 +1,4 @@
-package is.hi.hbv501g.eventmanager.Services;
+package is.hi.hbv501g.eventmanager.Utilities;
 
 import is.hi.hbv501g.eventmanager.Persistence.Entities.*;
 import is.hi.hbv501g.eventmanager.Requests.CreateUpdateEventRequest;
