@@ -1,7 +1,7 @@
 package is.hi.hbv501g.eventmanager.Requests;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import is.hi.hbv501g.eventmanager.Persistence.Entities.EventType;
+import is.hi.hbv501g.eventmanager.Utilities.EventType;
 import is.hi.hbv501g.eventmanager.Persistence.Entities.Venue;
 import lombok.*;
 import org.springframework.lang.Nullable;

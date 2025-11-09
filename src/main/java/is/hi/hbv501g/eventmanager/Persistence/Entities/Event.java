@@ -1,6 +1,7 @@
 package is.hi.hbv501g.eventmanager.Persistence.Entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import is.hi.hbv501g.eventmanager.Utilities.EventType;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.lang.NonNull;

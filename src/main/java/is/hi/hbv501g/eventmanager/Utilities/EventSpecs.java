@@ -1,7 +1,6 @@
-package is.hi.hbv501g.eventmanager.Persistence.Repositories;
+package is.hi.hbv501g.eventmanager.Utilities;
 
 import is.hi.hbv501g.eventmanager.Persistence.Entities.Event;
-import is.hi.hbv501g.eventmanager.Persistence.Entities.EventType;
 import org.springframework.data.jpa.domain.Specification;
 
 import java.math.BigDecimal;

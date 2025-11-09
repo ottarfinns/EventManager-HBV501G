@@ -17,7 +17,7 @@ import java.util.List;
  * but will not book tickets to any events.
  */
 @Entity
-@Table(name = "organizer")
+@Table(name = "organizers")
 @Getter @Setter
 @NoArgsConstructor
 public class Organizer extends User{

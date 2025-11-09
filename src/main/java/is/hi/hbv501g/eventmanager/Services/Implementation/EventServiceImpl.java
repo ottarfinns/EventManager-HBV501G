@@ -6,7 +6,7 @@ import is.hi.hbv501g.eventmanager.Requests.CreateUpdateEventRequest;
 import is.hi.hbv501g.eventmanager.Requests.EventFilterRequest;
 import is.hi.hbv501g.eventmanager.Services.AccountService;
 import is.hi.hbv501g.eventmanager.Services.EventService;
-import is.hi.hbv501g.eventmanager.Services.Mapper;
+import is.hi.hbv501g.eventmanager.Utilities.Mapper;
 import is.hi.hbv501g.eventmanager.Services.TicketService;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -16,7 +16,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
-import static is.hi.hbv501g.eventmanager.Persistence.Repositories.EventSpecs.*;
+import static is.hi.hbv501g.eventmanager.Utilities.EventSpecs.*;
 
 @Service
 public class EventServiceImpl implements EventService {
