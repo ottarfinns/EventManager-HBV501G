@@ -7,6 +7,7 @@ import is.hi.hbv501g.eventmanager.Persistence.Repositories.AttendeeRepository;
 import is.hi.hbv501g.eventmanager.Persistence.Repositories.OrganizerRepository;
 import is.hi.hbv501g.eventmanager.Requests.CreateUpdateUserRequest;
 import is.hi.hbv501g.eventmanager.Services.AccountService;
+import is.hi.hbv501g.eventmanager.Services.TicketService;
 import is.hi.hbv501g.eventmanager.Utilities.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -25,15 +26,19 @@ public class AccountServiceImpl implements AccountService {
     @Autowired
     private final OrganizerRepository organizerRepository;
 
+    private final TicketService ticketService;
+
     private final String emailRegex = "^(.+)@(\\S+)$";
 
     private final PasswordEncoder encoder = new BCryptPasswordEncoder();
 
-    public AccountServiceImpl(AttendeeRepository aRepo, OrganizerRepository oRepo) {
-        attendeeRepository = aRepo; organizerRepository = oRepo;
+    public AccountServiceImpl(AttendeeRepository aRepo, OrganizerRepository oRepo, TicketService ticketService) {
+        attendeeRepository = aRepo;
+        organizerRepository = oRepo;
+        this.ticketService = ticketService;
     }
 
-    public User createAccount(CreateUpdateUserRequest request){
+    public User createAccount(CreateUpdateUserRequest request) {
         // Validate request - check nulls, validate parameters
         if (request == null
                 || request.getUsername() == null
@@ -54,7 +59,7 @@ public class AccountServiceImpl implements AccountService {
         if (request.getIsOrganizer()) {
             // Organizer
 
-            if( organizerRepository.findByUsername(request.getUsername()).isPresent() // check if usename taken
+            if (organizerRepository.findByUsername(request.getUsername()).isPresent() // check if usename taken
                     || attendeeRepository.findByUsername(request.getUsername()).isPresent()
                     || organizerRepository.findByEmail(request.getEmail()).isPresent() // check if email used
             ) {
@@ -70,7 +75,7 @@ public class AccountServiceImpl implements AccountService {
         } else {
             // Attendee
 
-            if( attendeeRepository.findByUsername(request.getUsername()).isPresent() // check if username taken
+            if (attendeeRepository.findByUsername(request.getUsername()).isPresent() // check if username taken
                     || attendeeRepository.findByEmail(request.getEmail()).isPresent() // check if email taken
                     || organizerRepository.findByUsername(request.getUsername()).isPresent()
             ) {
@@ -90,7 +95,7 @@ public class AccountServiceImpl implements AccountService {
         return s;
     }
 
-    public User updateAccount(CreateUpdateUserRequest request){
+    public User updateAccount(CreateUpdateUserRequest request) {
         // Validate request
         // if nothing is to be updated, throw
         if (request.getName() == null
@@ -100,16 +105,16 @@ public class AccountServiceImpl implements AccountService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Missing fields");
         }
 
-        if ( request.getEmail() != null && !Pattern.matches(emailRegex, request.getEmail())) {
+        if (request.getEmail() != null && !Pattern.matches(emailRegex, request.getEmail())) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid email");
         }
-        if ( request.getPassword() != null && request.getPassword().length() < 4) {
+        if (request.getPassword() != null && request.getPassword().length() < 4) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Password must be at least 4 characters");
         }
         if (request.getUsername() != null && (
                 attendeeRepository.findByUsername(request.getUsername()).isPresent()
-                || organizerRepository.findByUsername(request.getUsername()).isPresent()
-                )){
+                        || organizerRepository.findByUsername(request.getUsername()).isPresent()
+        )) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Username taken");
         }
 
@@ -130,8 +135,7 @@ public class AccountServiceImpl implements AccountService {
 
             organizerRepository.save(s);
             return s;
-        }
-        else {
+        } else {
             // Attendee
 
             if (attendeeRepository.findByEmail(request.getEmail()).isPresent()) {
@@ -152,6 +156,7 @@ public class AccountServiceImpl implements AccountService {
 
     /**
      * Get an Organizer by the id
+     *
      * @param organizerId The attendee id.
      * @return Organizer if he was found, otherwise null.
      */
@@ -161,6 +166,7 @@ public class AccountServiceImpl implements AccountService {
 
     /**
      * Get an Attendee by the id
+     *
      * @param attendeeId The attendee id.
      * @return Attendee if he was found, otherwise null.
      */
@@ -171,27 +177,33 @@ public class AccountServiceImpl implements AccountService {
 
     /**
      * Deletes attendee account from the
+     *
      * @param attendeeId the id of the attendee
-     * */
-    public void deleteAttendee(Integer attendeeId){
-        if(attendeeId==null) throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Missing attendee id");
+     */
+    public void deleteAttendee(Integer attendeeId) {
+        if (attendeeId == null) throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Missing attendee id");
 
         Optional<Attendee> optionalAttendee = attendeeRepository.findById(attendeeId);
-        if (optionalAttendee.isEmpty()) throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Attendee with id " + attendeeId + " not found");
+        if (optionalAttendee.isEmpty())
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Attendee with id " + attendeeId + " not found");
         Attendee a = optionalAttendee.get();
+
+        ticketService.cancelAllUser(attendeeId);
 
         attendeeRepository.delete(a);
     }
 
     /**
      * Deletes organizer account
+     *
      * @param organizerId the id of the organizer
-     * */
-    public void deleteOrganizer(Integer organizerId){
-        if(organizerId==null) throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Missing organizer id");
+     */
+    public void deleteOrganizer(Integer organizerId) {
+        if (organizerId == null) throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Missing organizer id");
 
         Optional<Organizer> optionalOrganizer = organizerRepository.findById(organizerId);
-        if (optionalOrganizer.isEmpty()) throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Organizer with id " + organizerId + " not found");
+        if (optionalOrganizer.isEmpty())
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Organizer with id " + organizerId + " not found");
         Organizer o = optionalOrganizer.get();
 
         organizerRepository.delete(o);

@@ -54,4 +54,6 @@ public interface TicketService {
       * @return A list of tickets
       */
      List<Ticket> getTicketByEventId(Integer eventId);
+
+     void deleteTicket(int userId, int ticketId);
 }

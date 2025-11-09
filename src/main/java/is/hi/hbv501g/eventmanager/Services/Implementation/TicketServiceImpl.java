@@ -84,6 +84,20 @@ public class TicketServiceImpl implements TicketService {
         return repository.findByEventId(eventId);
     }
 
+    public void deleteTicket(int userId, int ticketId) {
+        if (ticketId <= 0) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Missing ticket Id");
+        }
+        Ticket ticket = getTicketById(ticketId);
+
+        if (!Objects.equals(ticket.getAttendeeId(), userId)) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Users can only delete their own tickets");
+        }
+
+        repository.delete(ticket);
+
+    }
+
     public Ticket cancelTicket(Integer userId, Integer ticketId, CreateUpdateTicketRequest request) {
         //get ticket by id
         if (ticketId==null || ticketId==0){

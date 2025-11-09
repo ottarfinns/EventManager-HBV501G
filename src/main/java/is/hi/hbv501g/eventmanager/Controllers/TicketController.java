@@ -4,6 +4,7 @@ import is.hi.hbv501g.eventmanager.Persistence.Entities.Ticket;
 import is.hi.hbv501g.eventmanager.Requests.CreateUpdateTicketRequest;
 import is.hi.hbv501g.eventmanager.Services.TicketService;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -67,5 +68,12 @@ public class TicketController {
         } else{
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Can only update ticket status to cancelled");
         }
+    }
+
+    @DeleteMapping("/tickets/{ticketId}")
+    @PreAuthorize("hasRole('ATTENDEE')")
+    public ResponseEntity<Void> deleteTicket(@AuthenticationPrincipal int userId, @PathVariable int ticketId) {
+        service.deleteTicket(userId, ticketId);
+        return ResponseEntity.noContent().build();
     }
 }
