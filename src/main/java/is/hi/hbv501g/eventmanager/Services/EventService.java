@@ -51,4 +51,11 @@ public interface EventService {
       *                    Validated to ensure that it is the organizer who created the event.
       */
      void deleteEvent(Integer eventId, Integer organizerId);
+
+     /**
+      * Deletes every Event that the Organizer made.
+      * @param organizerId The id of the organizer deleting the event.
+      *                    Validated to ensure that it is the organizer who created the event.
+      */
+     void deleteAllUserEvents(Integer organizerId);
 }
