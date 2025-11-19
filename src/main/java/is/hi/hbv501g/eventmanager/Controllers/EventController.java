@@ -108,7 +108,7 @@ public class EventController {
      * @return The event.
      */
     @GetMapping("/events/{eventId}")
-    public Event getEventById(@PathVariable int eventId) {
+    public Event getEventById(@PathVariable Integer eventId) {
         return service.getEventById(eventId);
     }
 
@@ -122,7 +122,7 @@ public class EventController {
      */
     @PostMapping("/events")
     @PreAuthorize("hasRole('ORGANIZER')")
-    public Event createEvent(@RequestBody CreateUpdateEventRequest request, @AuthenticationPrincipal int userId) {
+    public Event createEvent(@RequestBody CreateUpdateEventRequest request, @AuthenticationPrincipal Integer userId) {
         return service.createEvent(userId, request);
     }
 
@@ -139,7 +139,7 @@ public class EventController {
      */
     @PutMapping("/events/{eventId}/image")
     @PreAuthorize("hasRole('ORGANIZER')")
-    public ResponseEntity<String> uploadImage(@RequestParam("image") MultipartFile file, @PathVariable int eventId, @AuthenticationPrincipal int userId) throws IOException {
+    public ResponseEntity<String> uploadImage(@RequestParam("image") MultipartFile file, @PathVariable Integer eventId, @AuthenticationPrincipal Integer userId) throws IOException {
         return imageService.uploadImage(file, eventId, userId);
     }
 
@@ -152,7 +152,7 @@ public class EventController {
      * @throws IOException if an I/O error occurs while reading the image bytes.
      */
     @GetMapping("/events/{eventId}/image")
-    public ResponseEntity<byte[]> getImage(@PathVariable int eventId) throws IOException {
+    public ResponseEntity<byte[]> getImage(@PathVariable Integer eventId) throws IOException {
         return imageService.findByEventId(eventId);
     }
 
@@ -167,7 +167,7 @@ public class EventController {
      */
     @PutMapping("/events/{eventId}")
     @PreAuthorize("hasRole('ORGANIZER')")
-    public Event updateEvent(@PathVariable Integer eventId, @RequestBody CreateUpdateEventRequest request, @AuthenticationPrincipal int userId) {
+    public Event updateEvent(@PathVariable Integer eventId, @RequestBody CreateUpdateEventRequest request, @AuthenticationPrincipal Integer userId) {
         if (request.isCancel()) {
             return service.cancelEvent(eventId, userId);
         }

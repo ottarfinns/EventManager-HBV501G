@@ -32,7 +32,7 @@ public class TicketController {
      */
     @PostMapping("/tickets")
     @PreAuthorize("hasRole('ATTENDEE')")
-    public Ticket createTicket(@RequestBody CreateUpdateTicketRequest request, @AuthenticationPrincipal int userId) {
+    public Ticket createTicket(@RequestBody CreateUpdateTicketRequest request, @AuthenticationPrincipal Integer userId) {
         request.setAttendeeId(userId);
         return service.createTicket(request);
     }
@@ -45,7 +45,7 @@ public class TicketController {
      */
     @GetMapping("/tickets")
     @PreAuthorize("hasRole('ATTENDEE')")
-    public List<Ticket> getTicketByUserId( @AuthenticationPrincipal int userId){
+    public List<Ticket> getTicketByUserId( @AuthenticationPrincipal Integer userId){
         return service.getTicketByUserId(userId);
     }
     /**
@@ -58,7 +58,7 @@ public class TicketController {
      */
     @PutMapping("/tickets/{ticketId}")
     @PreAuthorize("hasRole('ATTENDEE')")
-    public Ticket updateTicketStatus(@AuthenticationPrincipal int userId, @RequestBody CreateUpdateTicketRequest request, @PathVariable int ticketId) {
+    public Ticket updateTicketStatus(@AuthenticationPrincipal Integer userId, @RequestBody CreateUpdateTicketRequest request, @PathVariable Integer ticketId) {
         if (request.getStatus()== Ticket.Status.cancelled) {
             return service.cancelTicket(userId, ticketId, request);
         } else{
@@ -68,7 +68,7 @@ public class TicketController {
 
     @DeleteMapping("/tickets/{ticketId}")
     @PreAuthorize("hasRole('ATTENDEE')")
-    public ResponseEntity<Void> deleteTicket(@AuthenticationPrincipal int userId, @PathVariable int ticketId) {
+    public ResponseEntity<Void> deleteTicket(@AuthenticationPrincipal Integer userId, @PathVariable Integer ticketId) {
         service.deleteTicket(userId, ticketId);
         return ResponseEntity.noContent().build();
     }
