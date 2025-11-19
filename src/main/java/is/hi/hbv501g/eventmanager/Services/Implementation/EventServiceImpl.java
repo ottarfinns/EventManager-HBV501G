@@ -5,7 +5,6 @@ import is.hi.hbv501g.eventmanager.Persistence.Repositories.EventRepository;
 import is.hi.hbv501g.eventmanager.Persistence.Repositories.OrganizerRepository;
 import is.hi.hbv501g.eventmanager.Requests.CreateUpdateEventRequest;
 import is.hi.hbv501g.eventmanager.Requests.EventFilterRequest;
-import is.hi.hbv501g.eventmanager.Services.AccountService;
 import is.hi.hbv501g.eventmanager.Services.EventService;
 import is.hi.hbv501g.eventmanager.Services.TicketService;
 import is.hi.hbv501g.eventmanager.Utilities.Mapper;
@@ -38,6 +37,7 @@ public class EventServiceImpl implements EventService {
                 || request.getName().isEmpty()
                 || request.getPrice() == null
                 || request.getMaxPeople() == null
+                || request.getDateTime() == null
         ) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Missing required fields");
         }
