@@ -37,36 +37,39 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
             String token = authHeader.substring(7);
 
-            if (jwtService.validateToken(token)) {
-                Integer userId = jwtService.getUserIdFromToken(token);
-                String userType = jwtService.getUserTypeFromToken(token);
-
-                boolean userExists = false;
-
-
-                if (Objects.equals(userType, "ORGANIZER")) {
-                    userExists = organizerRepository.existsById(userId);
-                }
-                else if (Objects.equals(userType, "ATTENDEE")) {
-                    userExists = attendeeRepository.existsById(userId);
-                }
-
-                if (!userExists) {
-                    SecurityContextHolder.clearContext();
-                    response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-                    return;
-                }
-
-                List<SimpleGrantedAuthority> authorities = List.of(
-                        new SimpleGrantedAuthority("ROLE_" + userType)
-                );
-
-                UsernamePasswordAuthenticationToken authentication =
-                        new UsernamePasswordAuthenticationToken(userId, null, authorities);
-
-                SecurityContextHolder.getContext().setAuthentication(authentication);
-
+            if (!jwtService.validateToken(token)) {
+                SecurityContextHolder.clearContext();
+                response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Invalid or expired token");
+                return;
             }
+
+            Integer userId = jwtService.getUserIdFromToken(token);
+            String userType = jwtService.getUserTypeFromToken(token);
+
+            boolean userExists = false;
+
+
+            if (Objects.equals(userType, "ORGANIZER")) {
+                userExists = organizerRepository.existsById(userId);
+            } else if (Objects.equals(userType, "ATTENDEE")) {
+                userExists = attendeeRepository.existsById(userId);
+            }
+
+            if (!userExists) {
+                SecurityContextHolder.clearContext();
+                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                return;
+            }
+
+            List<SimpleGrantedAuthority> authorities = List.of(
+                    new SimpleGrantedAuthority("ROLE_" + userType)
+            );
+
+            UsernamePasswordAuthenticationToken authentication =
+                    new UsernamePasswordAuthenticationToken(userId, null, authorities);
+
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+
         }
         filterChain.doFilter(request, response);
 

@@ -115,7 +115,7 @@ public class TicketServiceImpl implements TicketService {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Users can only cancel their own tickets");
         }
 
-        Optional<Event> optionalEvent = eventRepository.findById(ticketId);
+        Optional<Event> optionalEvent = eventRepository.findById(request.getEventId());
         if (optionalEvent.isEmpty()) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No event found for ticket with ID " + ticketId);
         }

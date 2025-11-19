@@ -42,7 +42,7 @@ public class AccountController {
     */
     @PutMapping("/accounts/organizer/{userId}")
     @PreAuthorize("hasRole('ORGANIZER')")
-    public Organizer updateOrganizer(@PathVariable Integer userId, @RequestBody CreateUpdateUserRequest request, @AuthenticationPrincipal int authId) {
+    public Organizer updateOrganizer(@PathVariable Integer userId, @RequestBody CreateUpdateUserRequest request, @AuthenticationPrincipal Integer authId) {
         if (!Objects.equals(userId, authId)) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Not authenticated as this user");
         }
@@ -141,12 +141,4 @@ public class AccountController {
         }
         return ResponseEntity.ok(organizer);
     }
-
-    /* Delete Endpoint
-    * Takes in the account id
-    */
-
-    /* Get endpoint
-    * Takes in the account id
-    */
 }
