@@ -45,7 +45,7 @@ public class TicketServiceImpl implements TicketService {
 
         //double check event is still active
         Event event = eventRepository.findById(request.getEventId()).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Event not found"));
-        if (!event.isActive()) {
+        if (!event.isActive() || event.getDateTime().isBefore(LocalDateTime.now())) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Event is not active");
         }
 

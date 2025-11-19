@@ -12,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -42,6 +43,9 @@ public class EventServiceImpl implements EventService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Missing required fields");
         }
 
+        if (request.getDateTime().isBefore(LocalDateTime.now())) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Event can not be created before the current date");
+        }
 
         // throws if not found
         var organizer = organizerRepository.findById(organizerId).orElseThrow(() -> new ResponseStatusException(
