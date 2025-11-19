@@ -34,11 +34,7 @@ public class TicketController {
     @PreAuthorize("hasRole('ATTENDEE')")
     public Ticket createTicket(@RequestBody CreateUpdateTicketRequest request, @AuthenticationPrincipal int userId) {
         request.setAttendeeId(userId);
-        Ticket ticket = service.createTicket(request);
-        if (ticket == null) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT, "Ticket could not be created");
-        }
-        return ticket;
+        return service.createTicket(request);
     }
 
     /**

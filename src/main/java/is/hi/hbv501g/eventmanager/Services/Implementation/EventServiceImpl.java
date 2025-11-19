@@ -5,7 +5,6 @@ import is.hi.hbv501g.eventmanager.Persistence.Repositories.EventRepository;
 import is.hi.hbv501g.eventmanager.Persistence.Repositories.OrganizerRepository;
 import is.hi.hbv501g.eventmanager.Requests.CreateUpdateEventRequest;
 import is.hi.hbv501g.eventmanager.Requests.EventFilterRequest;
-import is.hi.hbv501g.eventmanager.Services.AccountService;
 import is.hi.hbv501g.eventmanager.Services.EventService;
 import is.hi.hbv501g.eventmanager.Services.TicketService;
 import is.hi.hbv501g.eventmanager.Utilities.Mapper;
@@ -13,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -38,10 +38,14 @@ public class EventServiceImpl implements EventService {
                 || request.getName().isEmpty()
                 || request.getPrice() == null
                 || request.getMaxPeople() == null
+                || request.getDateTime() == null
         ) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Missing required fields");
         }
 
+        if (request.getDateTime().isBefore(LocalDateTime.now())) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Event can not be created before the current date");
+        }
 
         // throws if not found
         var organizer = organizerRepository.findById(organizerId).orElseThrow(() -> new ResponseStatusException(

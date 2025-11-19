@@ -6,8 +6,8 @@ import is.hi.hbv501g.eventmanager.Persistence.Entities.Ticket.Status;
 import is.hi.hbv501g.eventmanager.Persistence.Repositories.EventRepository;
 import is.hi.hbv501g.eventmanager.Persistence.Repositories.TicketRepository;
 import is.hi.hbv501g.eventmanager.Requests.CreateUpdateTicketRequest;
-import is.hi.hbv501g.eventmanager.Utilities.Mapper;
 import is.hi.hbv501g.eventmanager.Services.TicketService;
+import is.hi.hbv501g.eventmanager.Utilities.Mapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,8 +15,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 @Service
 public class TicketServiceImpl implements TicketService {
@@ -43,7 +45,7 @@ public class TicketServiceImpl implements TicketService {
 
         //double check event is still active
         Event event = eventRepository.findById(request.getEventId()).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Event not found"));
-        if (!event.isActive()) {
+        if (!event.isActive() || event.getDateTime().isBefore(LocalDateTime.now())) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Event is not active");
         }
 
@@ -113,6 +115,18 @@ public class TicketServiceImpl implements TicketService {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Users can only cancel their own tickets");
         }
 
+        Optional<Event> optionalEvent = eventRepository.findById(ticketId);
+        if (optionalEvent.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No event found for ticket with ID " + ticketId);
+        }
+
+        else {
+            LocalDateTime eventDate = optionalEvent.get().getDateTime();
+            if (eventDate.isBefore(LocalDateTime.now())) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Can't cancel expired ticket");
+            }
+        }
+
         //check status, can only cancel active ticket
         if (t.getStatus()==Status.cancelled) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Ticket is cancelled already");
@@ -135,7 +149,9 @@ public class TicketServiceImpl implements TicketService {
         }
 
         for (Ticket t : tickets) {
-            t.setStatus(Status.cancelled);
+            CreateUpdateTicketRequest request = new CreateUpdateTicketRequest();
+            request.setEventId(t.getEventId());
+            cancelTicket(attendeeId, t.getId(), request);
             t.setAttendeeId(0);
         }
         repository.saveAll(tickets);
