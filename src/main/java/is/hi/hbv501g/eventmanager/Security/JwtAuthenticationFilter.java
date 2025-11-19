@@ -1,5 +1,7 @@
 package is.hi.hbv501g.eventmanager.Security;
 
+import is.hi.hbv501g.eventmanager.Persistence.Repositories.AttendeeRepository;
+import is.hi.hbv501g.eventmanager.Persistence.Repositories.OrganizerRepository;
 import is.hi.hbv501g.eventmanager.Services.JwtService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -14,11 +16,18 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Objects;
 
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
     @Autowired
     private JwtService jwtService;
+
+    @Autowired
+    private OrganizerRepository organizerRepository;
+
+    @Autowired
+    private AttendeeRepository attendeeRepository;
 
     @Override
     public void doFilterInternal(HttpServletRequest request,
@@ -31,6 +40,22 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             if (jwtService.validateToken(token)) {
                 Integer userId = jwtService.getUserIdFromToken(token);
                 String userType = jwtService.getUserTypeFromToken(token);
+
+                boolean userExists = false;
+
+
+                if (Objects.equals(userType, "ORGANIZER")) {
+                    userExists = organizerRepository.existsById(userId);
+                }
+                else if (Objects.equals(userType, "ATTENDEE")) {
+                    userExists = attendeeRepository.existsById(userId);
+                }
+
+                if (!userExists) {
+                    SecurityContextHolder.clearContext();
+                    response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                    return;
+                }
 
                 List<SimpleGrantedAuthority> authorities = List.of(
                         new SimpleGrantedAuthority("ROLE_" + userType)
