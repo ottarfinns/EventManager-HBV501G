@@ -104,7 +104,8 @@ public class AccountServiceImpl implements AccountService {
         if (request.getName() == null
                 && request.getPassword() == null
                 && request.getEmail() == null
-                && request.getUsername() == null) {
+                && request.getUsername() == null
+                && request.getPhoneNumber() == null) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Missing fields");
         }
 

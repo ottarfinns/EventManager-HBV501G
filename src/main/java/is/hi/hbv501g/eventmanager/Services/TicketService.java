@@ -25,9 +25,9 @@ public interface TicketService {
      /**
       * Cancel all tickets belonging to a user
       * @param userId The id of the user.
-      * @return success
+      *
       */
-     boolean cancelAllUser(Integer userId);/**
+     void cancelAllUser(Integer userId);/**
 
       * Cancel all tickets to an event
       * @param eventId The id of the event.
