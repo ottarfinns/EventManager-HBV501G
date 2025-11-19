@@ -127,21 +127,18 @@ public class TicketServiceImpl implements TicketService {
         return t;
     }
 
-    public boolean cancelAllUser(Integer attendeeId) {
-        if (attendeeId == null) {
-            return false;
-        }
+    public void cancelAllUser(Integer attendeeId) {
         List<Ticket> tickets = getTicketByUserId(attendeeId);
 
         if (tickets == null) {
-            return false;
+            return;
         }
 
         for (Ticket t : tickets) {
             t.setStatus(Status.cancelled);
+            t.setAttendeeId(0);
         }
         repository.saveAll(tickets);
-        return true;
     }
 
     public void cancelAllEvent(Integer eventId) {

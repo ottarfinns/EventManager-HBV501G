@@ -12,6 +12,7 @@ import lombok.Setter;
 @Entity
 @Getter
 @Setter
+@Table(name = "tickets")
 @NoArgsConstructor
 @AllArgsConstructor
 public class Ticket {
