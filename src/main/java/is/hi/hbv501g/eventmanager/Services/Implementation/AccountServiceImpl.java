@@ -7,6 +7,7 @@ import is.hi.hbv501g.eventmanager.Persistence.Repositories.AttendeeRepository;
 import is.hi.hbv501g.eventmanager.Persistence.Repositories.OrganizerRepository;
 import is.hi.hbv501g.eventmanager.Requests.CreateUpdateUserRequest;
 import is.hi.hbv501g.eventmanager.Services.AccountService;
+import is.hi.hbv501g.eventmanager.Services.EventService;
 import is.hi.hbv501g.eventmanager.Services.TicketService;
 import is.hi.hbv501g.eventmanager.Utilities.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,15 +28,17 @@ public class AccountServiceImpl implements AccountService {
     private final OrganizerRepository organizerRepository;
 
     private final TicketService ticketService;
+    private final EventService eventService;
 
     private final String emailRegex = "^(.+)@(\\S+)$";
 
     private final PasswordEncoder encoder = new BCryptPasswordEncoder();
 
-    public AccountServiceImpl(AttendeeRepository aRepo, OrganizerRepository oRepo, TicketService ticketService) {
+    public AccountServiceImpl(AttendeeRepository aRepo, OrganizerRepository oRepo, TicketService ticketService, EventService eventService) {
         attendeeRepository = aRepo;
         organizerRepository = oRepo;
         this.ticketService = ticketService;
+        this.eventService = eventService;
     }
 
     public User createAccount(CreateUpdateUserRequest request) {
@@ -205,6 +208,8 @@ public class AccountServiceImpl implements AccountService {
         if (optionalOrganizer.isEmpty())
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Organizer with id " + organizerId + " not found");
         Organizer o = optionalOrganizer.get();
+
+        eventService.deleteAllUserEvents(organizerId);
 
         organizerRepository.delete(o);
     }

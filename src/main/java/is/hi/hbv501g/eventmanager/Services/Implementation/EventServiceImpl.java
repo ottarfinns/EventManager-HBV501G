@@ -2,12 +2,13 @@ package is.hi.hbv501g.eventmanager.Services.Implementation;
 
 import is.hi.hbv501g.eventmanager.Persistence.Entities.Event;
 import is.hi.hbv501g.eventmanager.Persistence.Repositories.EventRepository;
+import is.hi.hbv501g.eventmanager.Persistence.Repositories.OrganizerRepository;
 import is.hi.hbv501g.eventmanager.Requests.CreateUpdateEventRequest;
 import is.hi.hbv501g.eventmanager.Requests.EventFilterRequest;
 import is.hi.hbv501g.eventmanager.Services.AccountService;
 import is.hi.hbv501g.eventmanager.Services.EventService;
-import is.hi.hbv501g.eventmanager.Utilities.Mapper;
 import is.hi.hbv501g.eventmanager.Services.TicketService;
+import is.hi.hbv501g.eventmanager.Utilities.Mapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -21,14 +22,13 @@ import static is.hi.hbv501g.eventmanager.Utilities.EventSpecs.*;
 @Service
 public class EventServiceImpl implements EventService {
     private final EventRepository eventRepository;
-    private final AccountService accountService;
+    private final OrganizerRepository organizerRepository;
     private final TicketService ticketService;
 
-    public EventServiceImpl(EventRepository repo, AccountService accountService, TicketService ticketService)
-    {
+    public EventServiceImpl(EventRepository repo, OrganizerRepository organizerRepository, TicketService ticketService) {
         eventRepository = repo;
-        this.accountService = accountService;
         this.ticketService = ticketService;
+        this.organizerRepository = organizerRepository;
     }
 
     public Event createEvent(Integer organizerId, CreateUpdateEventRequest request) {
@@ -42,19 +42,19 @@ public class EventServiceImpl implements EventService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Missing required fields");
         }
 
-        try {
-            // throws if not found
-            var organizer = accountService.getOrganizerById(organizerId);Event s;
 
-            Event e = Mapper.Map(request, organizer);
-            s = eventRepository.save(e);
-            return s;
-        }
-        catch(Exception e) {
-            throw new ResponseStatusException(
-                    HttpStatus.FORBIDDEN, "User is not an organizer"
-            );
-        }
+        // throws if not found
+        var organizer = organizerRepository.findById(organizerId).orElseThrow(() -> new ResponseStatusException(
+                HttpStatus.NOT_FOUND,
+                "Organizer with id " + organizerId + " not found"
+        ));
+
+        Event s;
+
+        Event e = Mapper.Map(request, organizer);
+        s = eventRepository.save(e);
+        return s;
+
     }
 
     @Override
@@ -84,7 +84,8 @@ public class EventServiceImpl implements EventService {
     @Override
     public Event updateEvent(Integer eventId, Integer organizerId, CreateUpdateEventRequest request) {
         //Validate request
-        if (request == null || eventId == null) throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Missing required event data"); // Bad request
+        if (request == null || eventId == null)
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Missing required event data"); // Bad request
 
         Optional<Event> optionalEvent = eventRepository.findById(eventId);
         if (optionalEvent.isEmpty()) throw new RuntimeException();
@@ -92,8 +93,9 @@ public class EventServiceImpl implements EventService {
             var e = optionalEvent.get();
 
             // check organizer id is the same
-            if (!Objects.equals(e.getOrganizer().getId(), organizerId)) throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Organizer does not own this event");
-            else  {
+            if (!Objects.equals(e.getOrganizer().getId(), organizerId))
+                throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Organizer does not own this event");
+            else {
                 if (request.getName() != null) e.setName(request.getName());
                 if (request.getType() != null) e.setType(request.getType());
                 if (request.getDescription() != null) e.setDescription(request.getDescription());
@@ -123,11 +125,13 @@ public class EventServiceImpl implements EventService {
 
         //get the event
         Optional<Event> optionalEvent = eventRepository.findById(eventId);
-        if (optionalEvent.isEmpty()) throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Event with id " + eventId + " not found");
+        if (optionalEvent.isEmpty())
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Event with id " + eventId + " not found");
         Event e = optionalEvent.get();
 
         //checks that organizer is owner
-        if (!Objects.equals(e.getOrganizer().getId(), organizerId)) throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Organizer does not own this event");
+        if (!Objects.equals(e.getOrganizer().getId(), organizerId))
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Organizer does not own this event");
 
 
         //cancel the event if it's active
@@ -135,7 +139,7 @@ public class EventServiceImpl implements EventService {
             ticketService.cancelAllEvent(eventId);
             e.setActive(false);
             eventRepository.save(e);
-        } else{
+        } else {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Event is already cancelled");
         }
         return e;
@@ -148,18 +152,34 @@ public class EventServiceImpl implements EventService {
 
         //find event
         Optional<Event> optionalEvent = eventRepository.findById(eventId);
-        if (optionalEvent.isEmpty()) throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Event with id " + eventId + " not found");
+        if (optionalEvent.isEmpty())
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Event with id " + eventId + " not found");
         Event e = optionalEvent.get();
 
         //checks that organizer is owner
-        if (!Objects.equals(e.getOrganizer().getId(), organizerId)) throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Organizer does not own this event");
+        if (!Objects.equals(e.getOrganizer().getId(), organizerId))
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Organizer does not own this event");
 
         //cancel all tickets for event
         if (e.isActive()) {
-           ticketService.cancelAllEvent(eventId);
+            ticketService.cancelAllEvent(eventId);
         }
 
         eventRepository.delete(e);
+    }
 
+    public void deleteAllUserEvents(Integer organizerId) {
+        if (organizerId == null) throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Missing organizer id");
+
+        List<Event> events = eventRepository.findByOrganizerId(organizerId);
+
+        if (events.isEmpty()) {
+            return;
+        }
+
+        for (Event event : events) {
+            int eventId = event.getId();
+            deleteEvent(eventId, organizerId);
+        }
     }
 }
