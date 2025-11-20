@@ -14,13 +14,13 @@ public interface TicketService {
      Ticket createTicket(CreateUpdateTicketRequest request);
 
      /**
-      * Sets a ticket status to cancel.
+      * Modify a ticket's status.
       * @param userId The id of the requesting user.
       * @param ticketId The ticket to be cancelled.
-      * @param request Ticket information (event id)
-      * @return The now cancelled ticket
+      * @param request Ticket information (event id, new status)
+      * @return The now modified ticket
       */
-     Ticket cancelTicket(Integer userId, Integer ticketId, CreateUpdateTicketRequest request);
+     Ticket updateTicketStatus(Integer userId, Integer ticketId, CreateUpdateTicketRequest request);
 
      /**
       * Cancel all tickets belonging to a user

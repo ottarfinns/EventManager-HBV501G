@@ -16,7 +16,7 @@ import java.util.Date;
 @Service
 public class JwtServiceImplementation implements JwtService {
 
-    private static final long EXPIRATION_TIME = 60 * 60 * 1000; // Expiration time is 30 minutes
+    private static final long EXPIRATION_TIME = 12 * 60 * 1000; // Expiration time is 12 hours
 
     private final SecretKey key;
 

@@ -48,7 +48,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
             boolean userExists = false;
 
-
             if (Objects.equals(userType, "ORGANIZER")) {
                 userExists = organizerRepository.existsById(userId);
             } else if (Objects.equals(userType, "ATTENDEE")) {

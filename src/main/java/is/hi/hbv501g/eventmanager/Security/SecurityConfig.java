@@ -34,18 +34,19 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         // 1) Public endpoints (no token needed)
                         .requestMatchers("/auth/**").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/accounts").permitAll()   // signup
-                        .requestMatchers(HttpMethod.GET, "/events/**").permitAll()  // list & view events (public)
+                        .requestMatchers(HttpMethod.POST, "/accounts").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/events/**").permitAll()
 
-                        // 2) Protected endpoints (token required; choose role or just isAuthenticated)
-                        //.requestMatchers(HttpMethod.POST, "/events/**").authenticated()
+                        // 2) Protected endpoints
+                        .requestMatchers(HttpMethod.POST, "/events/**").authenticated()
                         .requestMatchers(HttpMethod.PUT, "/events/**").authenticated()
                         .requestMatchers(HttpMethod.DELETE, "/events/**").authenticated()
-                        .requestMatchers(HttpMethod.GET, "/test-auth/**").authenticated()
-                        .requestMatchers(HttpMethod.POST, "/test-auth/**").authenticated()
+                        .requestMatchers("/tickets/**").authenticated()
+                        .requestMatchers(HttpMethod.PUT, "/accounts/**").authenticated()
+                        .requestMatchers(HttpMethod.DELETE, "/accounts/**").authenticated()
 
                         // 3) Everything else
-                        .anyRequest().permitAll() // or .authenticated() if you prefer default-locked
+                        .anyRequest().permitAll()
                 )
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
