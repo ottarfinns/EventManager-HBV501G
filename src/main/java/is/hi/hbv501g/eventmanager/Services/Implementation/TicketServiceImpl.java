@@ -100,9 +100,9 @@ public class TicketServiceImpl implements TicketService {
 
     }
 
-    public Ticket cancelTicket(Integer userId, Integer ticketId, CreateUpdateTicketRequest request) {
+    public Ticket updateTicketStatus(Integer userId, Integer ticketId, CreateUpdateTicketRequest request) {
         //get ticket by id
-        if (ticketId==null || ticketId==0){
+        if (ticketId == null || ticketId == 0) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Missing ticket ID");
         }
         Ticket t = getTicketById(ticketId);
@@ -111,8 +111,8 @@ public class TicketServiceImpl implements TicketService {
         }
 
         //check whether user calling function owns this ticket
-        if (!Objects.equals(t.getAttendeeId(), userId)){
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Users can only cancel their own tickets");
+        if (!Objects.equals(t.getAttendeeId(), userId)) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Users can only modify their own tickets");
         }
 
         Optional<Event> optionalEvent = eventRepository.findById(request.getEventId());
@@ -120,24 +120,46 @@ public class TicketServiceImpl implements TicketService {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No event found for ticket with ID " + ticketId);
         }
 
-        else {
-            LocalDateTime eventDate = optionalEvent.get().getDateTime();
-            if (eventDate.isBefore(LocalDateTime.now())) {
-                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Can't cancel expired ticket");
+        Event event = optionalEvent.get();
+        LocalDateTime eventDate = optionalEvent.get().getDateTime();
+
+        Status currentStatus = t.getStatus();
+        Status newStatus = request.getStatus();
+
+        if (currentStatus == Status.cancelled || currentStatus == Status.checked_in || currentStatus == Status.expired) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Can't modify a ticket that is already " + currentStatus);
+        }
+
+        boolean eventExpired = eventDate.isBefore(LocalDateTime.now());
+
+        switch (newStatus) {
+            case cancelled:
+                if (eventExpired) {
+                    throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Can't cancel expired ticket");
+                }
+                break;
+            case checked_in: {
+                if (eventExpired) {
+                    throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Can't check in to an expired event");
+                }
+                break;
             }
+
+            case expired:
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Ticket can't manually be set to expired");
+
+            case active:
+                if (currentStatus == Status.active) {
+                    throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Ticket is already active");
+                }
+                break;
+            default:
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid status " + newStatus);
         }
 
-        //check status, can only cancel active ticket
-        if (t.getStatus()==Status.cancelled) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT, "Ticket is cancelled already");
-        } else if (t.getStatus()==Status.checked_in) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT, "Can't cancel used ticket");
-        } else if (t.getStatus()==Status.expired) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT, "Can't cancel expired ticket");
-        }
-
-        t.setStatus(Status.cancelled);
+        t.setStatus(newStatus);
         repository.save(t);
+
         return t;
     }
 
@@ -151,7 +173,8 @@ public class TicketServiceImpl implements TicketService {
         for (Ticket t : tickets) {
             CreateUpdateTicketRequest request = new CreateUpdateTicketRequest();
             request.setEventId(t.getEventId());
-            cancelTicket(attendeeId, t.getId(), request);
+            request.setStatus(Status.cancelled);
+            updateTicketStatus(attendeeId, t.getId(), request);
             t.setAttendeeId(0);
         }
         repository.saveAll(tickets);
@@ -166,7 +189,7 @@ public class TicketServiceImpl implements TicketService {
             return; //no tickets for event
         }
         for (Ticket t : tickets) {
-            if (t.getStatus()==Status.active) {
+            if (t.getStatus() == Status.active) {
                 t.setStatus(Status.cancelled);
             }
         }

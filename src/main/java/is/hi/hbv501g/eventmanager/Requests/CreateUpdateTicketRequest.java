@@ -21,11 +21,12 @@ public class CreateUpdateTicketRequest {
 
 
     //Constructor for Create
-    public CreateUpdateTicketRequest(Integer eventId) {
-        this.eventId = eventId;
-    }
+//    public CreateUpdateTicketRequest(Integer eventId) {
+//        this.eventId = eventId;
+//    }
 
-    public CreateUpdateTicketRequest(Status status) {
+    public CreateUpdateTicketRequest(Integer eventId, Status status) {
+        this.eventId = eventId;
         this.status = status;
     }
 
